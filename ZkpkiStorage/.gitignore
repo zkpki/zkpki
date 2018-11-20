@@ -79,9 +79,3 @@ typings/
 # Visual Studio stuff
 obj/
 bin/
-package-lock.json
-
-# Test stuff
-test/
-
-
