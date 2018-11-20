@@ -1,9 +1,11 @@
-﻿var providers = [
-    "file"
+﻿let providers = [
+    "file",
 ];
 
+let storage = exports;
+
 providers.forEach(function (provider) {
-    exports.__defineGetter__(provider, function () {
+    storage.__defineGetter__(provider, function () {
         return require("./providers/" + provider);
     });
 });

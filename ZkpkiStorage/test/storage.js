@@ -1,6 +1,7 @@
-﻿var assert = require("assert");
-var storage = require("../lib/storage");
+﻿const assert = require("assert");
+const storage = require("../lib/storage");
 
+/*eslint no-undef: 0*/
 describe("Storage", function () {
 
     it("Check providers", async () => {        

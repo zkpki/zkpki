@@ -13,7 +13,7 @@ function generateFilename(key, options) {
 
 exports.open = async (key, options) => { 
     const filename = generateFilename(key, options);
-    var result = {
+    let result = {
         key: key,
         filename: filename,
         get: async () => {            
