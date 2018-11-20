@@ -1,5 +1,5 @@
-﻿const assert = require('assert');
-const crypto = require('../../lib/crypto')
+﻿const assert = require("assert");
+const crypto = require("../../lib/crypto");
 
 describe("Storage tests for file provider", function () {
     it("randomBytes()", () => {

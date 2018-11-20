@@ -1,16 +1,16 @@
-﻿const assert = require('assert');
-const { promisify } = require('util');
-const fs = require('fs'); 
+﻿const assert = require("assert");
+const { promisify } = require("util");
+const fs = require("fs"); 
 const unlinkFileAsync = promisify(fs.unlink);
 const statFileAsync = promisify(fs.stat);
 
-const storage = require('../../lib/storage').file
+const storage = require("../../lib/storage").file;
 
 describe("Storage tests for file provider",  () => { 
 
     var blob;
     var key = "Ohneo4ahthahSeG9AeT0thai4Moineex";
-    var keyHash = "HBkpxPmA2123XGEGXpxVwcfDyi71ViNemDw46ohq1BdC"
+    var keyHash = "HBkpxPmA2123XGEGXpxVwcfDyi71ViNemDw46ohq1BdC";
 
     beforeEach(async () => {
         blob = await storage.open(key, { path: "./test" });
@@ -30,7 +30,7 @@ describe("Storage tests for file provider",  () => {
     
     it("test set() and get()", async () => {
         var value = "This is a crazy cool value";
-        await blob.set(value)
+        await blob.set(value);
         result = await blob.get();
         assert.equal(result, value);        
     });
@@ -43,7 +43,8 @@ describe("Storage tests for file provider",  () => {
             assert.ok(false); // should have thrown!
         }
         catch (err) {
-        };
+            // Empty
+        }
     });
 
     after(async () => {

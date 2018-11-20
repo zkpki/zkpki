@@ -1,6 +1,6 @@
-﻿const { promisify } = require('util');
-const fs = require('fs');
-const crypto = require('../../crypto');
+﻿const { promisify } = require("util");
+const fs = require("fs");
+const crypto = require("../../crypto");
 
 const readfileAsync = promisify(fs.readFile);
 const writefileAsync = promisify(fs.writeFile);
@@ -42,4 +42,4 @@ exports.open = async (key, options) => {
 exports.delete = async (key, options) => {
     const filename = generateFilename(key, options);
     unlinkFileAsync(filename);
-}
+};

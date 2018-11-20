@@ -1,13 +1,10 @@
-﻿
-var storage = exports;
-
-var providers = [
+﻿var providers = [
     "file"
 ];
 
 providers.forEach(function (provider) {
-    storage.__defineGetter__(provider, function () {
-        return require('./providers/' + provider);
+    exports.__defineGetter__(provider, function () {
+        return require("./providers/" + provider);
     });
 });
 
