@@ -1,0 +1,16 @@
+{
+  "name": "zkpki-cert-utils",
+  "version": "0.0.0",
+  "description": "Utilties for creating and handling certificates based on PKI.js",
+  "main": "index.js",
+  "author": {
+    "name": "Dan Peterson"
+  },
+  "dependencies": {
+    "node-webcrypto-ossl": "^1.0.38",
+    "pkijs": "^2.1.72"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
+}
