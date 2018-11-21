@@ -13,11 +13,14 @@ describe("Certificate creation functions", function() {
                     subjectDn: "cn=foo",
                     lifetimeDays: 365 * 10,
                     isCa: true,
+                    subjectAlternativeNames: [
+                        { ip: "192.168.0.1" }, { dns: "hello.com" }
+                    ],
                     keyUsages: certUtil.KEY_USAGES.KeySignCert |
                         certUtil.KEY_USAGES.CrlSign |
                         certUtil.KEY_USAGES.DigitalSignature |
                         certUtil.KEY_USAGES.KeyAgreement |
-                        certUtil.KEY_USAGES.DataEncipherment,
+                        certUtil.KEY_USAGES.KeyEncipherment,
                     extendedKeyUsages: certUtil.EXTENDED_KEY_USAGES.ServerAuthentication |
                         certUtil.EXTENDED_KEY_USAGES.ClientAuthentication
                 });
@@ -32,6 +35,7 @@ describe("Certificate creation functions", function() {
             assert.ok(cert.certificate, "Certificate PEM is not empty");
             assert.ok(cert.privateKey === null, "Private key PEM is empty");
             // TODO: parse certificate and check values directly
+            // TODO: check that authority key identifier matches subject key identifier
         });
 
     it("Create new Root CA",
@@ -52,5 +56,6 @@ describe("Certificate creation functions", function() {
             assert.ok(cert.certificate, "Certificate PEM is not empty");
             assert.ok(cert.privateKey, "Private key PEM is not empty");
             // TODO: parse certificate and check values directly
+            // TODO: check that authority key identifier matches subject key identifier
         });
 });

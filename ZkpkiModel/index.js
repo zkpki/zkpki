@@ -5,6 +5,7 @@ try {
     const certUtil = require("./lib/cert-util");
     certUtil.newRootCa("cn=dan,o=company,c=US").then(certificate => {
         console.log(certificate);
+        console.log(certificate.certificate);
     }).catch(error => {
         console.log(error);
     });

@@ -11,6 +11,10 @@ const conversions = require("./conversions.js");
 const constants = require("./constants.js");
 const startingSerialNumber = 100000;
 
+const ipAddress = require("ip-address");
+
+
+// internal functions
 function validateCertificateOptions(options) {
     if (!Number.isInteger(options.serialNumber))
         throw new Error("serialNumber option is required and must be an integer");
@@ -20,6 +24,17 @@ function validateCertificateOptions(options) {
         throw new Error("issuerDn option is required");
     if (!options.subjectDn)
         throw new Error("subjectDn option is required");
+    if (options.subjectAlterativeNames) {
+        if (!Array.isArray(options.subjectAlternativeNames))
+            throw new Error("subjectAlternativeNames option must be an array");
+        options.subjectAlternativeNames.forEach(sAN => {
+            if (!("ip" in sAN || "dns" in sAN)) {
+                throw new Error(
+                    "subjectAlternativeNames option is an array of objects with a single property, "
+                    + "where that property is either 'ip' or 'dns'");
+            }
+        });
+    }
 }
 
 function getOidForEku(eku) {
@@ -93,6 +108,64 @@ function getExtendedKeyUsagesExtension(ekus, markCritical = false, ...additonalO
     });
 }
 
+async function getSubjectKeyIdentifierExtension(subjectPublicKey) {
+    const keyDer = await pkijs.getCrypto().exportKey("spki", subjectPublicKey);
+    const thumbprint = await pkijs.getCrypto().digest({ name: "SHA-1" }, keyDer);
+    return new pkijs.Extension({
+        extnID: "2.5.29.14",
+        critical: false,
+        extnValue: (new asn1js.OctetString({ valueHex: thumbprint })).toBER(false)
+    });
+}
+
+async function getAuthorityKeyIdentifierExtension(authorityPublicKey) {
+    const keyDer = await pkijs.getCrypto().exportKey("spki", authorityPublicKey);
+    const thumbprint = await pkijs.getCrypto().digest({ name: "SHA-1" }, keyDer);
+    return new pkijs.Extension({
+        extnID: "2.5.29.35",
+        critical: false,
+        extnValue: new pkijs.AuthorityKeyIdentifier({
+            keyIdentifier: (new asn1js.OctetString({ valueHex: thumbprint }))
+        }).toSchema().toBER(false)
+    });
+}
+
+function parseIpAddress(ipaddressString) {
+    const addr4 = new ipAddress.Address4(ipaddressString);
+    if (addr4.isValid())
+        return addr4.toByteArray();
+    const addr6 = new ipAddress.Address6(ipaddressString);
+    if (addr6.isValid())
+        return addr6.toByteArray();
+    throw new Error(`${ipaddressString} is not a valid IP address`);
+}
+
+function getSubjectAlternativeNamesExtension(subjectAlternativeNames) {
+    const names = [];
+    subjectAlternativeNames.forEach(sAN => {
+        if ("ip" in sAN) {
+
+            names.push(new pkijs.GeneralName({
+                type: 7, // iPAddress
+                value: new asn1js.OctetString({ valueHex: (new Uint8Array([0xC0, 0xA8, 0x00, 0x01])).buffer })
+            }));
+        }
+        if ("dns" in sAN) 
+            names.push(new pkijs.GeneralName({
+                type: 2, // dNSName
+                value: sAN.dns
+            }));
+    });
+    const altNames = new pkijs.GeneralNames({
+        names: names
+    });
+    return new pkijs.Extension({
+        extnID: "2.5.29.17",
+        critical: false,
+        extnValue: altNames.toSchema().toBER(false)
+    });
+}
+
 
 // exports
 exports.generateKeyPair = async (algorithmName, keySize) => {
@@ -102,7 +175,7 @@ exports.generateKeyPair = async (algorithmName, keySize) => {
     return await pkijs.getCrypto().generateKey(algorithm.algorithm, true, algorithm.usages);
 }
 
- exports.createCertificate = async (issuerKeyPair, subjectPublicKey, options) => {
+exports.createCertificate = async (issuerKeyPair, subjectPublicKey, options) => {
     validateCertificateOptions(options);
 
     const cert = new pkijs.Certificate();
@@ -123,8 +196,13 @@ exports.generateKeyPair = async (algorithmName, keySize) => {
     if (options.extendedKeyUsages)
         cert.extensions.push(getExtendedKeyUsagesExtension(options.extendedKeyUsages));
 
-    // TODO: support identity and authority key identifiers
-    // TODO: support subject alternative names
+    // Key Identifiers
+    cert.extensions.push(await getSubjectKeyIdentifierExtension(subjectPublicKey));
+    cert.extensions.push(await getAuthorityKeyIdentifierExtension(issuerKeyPair.publicKey));
+
+     // Subject Alternative Names
+    if (options.subjectAlternativeNames)
+        cert.extensions.push(getSubjectAlternativeNamesExtension(options.subjectAlternativeNames));
 
     await cert.subjectPublicKeyInfo.importKey(subjectPublicKey);
     await cert.sign(issuerKeyPair.privateKey, "SHA-256");
