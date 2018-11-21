@@ -17,7 +17,7 @@ describe("Certificate creation functions", function() {
                         certUtil.KEY_USAGES.CrlSign |
                         certUtil.KEY_USAGES.DigitalSignature |
                         certUtil.KEY_USAGES.KeyAgreement |
-                        certUtil.KEY_USAGES.DataEncipherment,
+                        certUtil.KEY_USAGES.KeyEncipherment,
                     extendedKeyUsages: certUtil.EXTENDED_KEY_USAGES.ServerAuthentication |
                         certUtil.EXTENDED_KEY_USAGES.ClientAuthentication
                 });

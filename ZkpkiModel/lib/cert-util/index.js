@@ -93,6 +93,28 @@ function getExtendedKeyUsagesExtension(ekus, markCritical = false, ...additonalO
     });
 }
 
+async function getSubjectKeyIdentifierExtension(subjectPublicKey) {
+    const keyDer = await pkijs.getCrypto().exportKey("spki", subjectPublicKey);
+    const thumbprint = await pkijs.getCrypto().digest({ name: "SHA-1" }, keyDer);
+    return new pkijs.Extension({
+        extnID: "2.5.29.14",
+        critical: false,
+        extnValue: (new asn1js.OctetString({ valueHex: thumbprint })).toBER(false)
+    });
+}
+
+async function getAuthorityKeyIdentifierExtension(authorityPublicKey) {
+    const keyDer = await pkijs.getCrypto().exportKey("spki", authorityPublicKey);
+    const thumbprint = await pkijs.getCrypto().digest({ name: "SHA-1" }, keyDer);
+    return new pkijs.Extension({
+        extnID: "2.5.29.35",
+        critical: false,
+        extnValue: new pkijs.AuthorityKeyIdentifier({
+            keyIdentifier: (new asn1js.OctetString({ valueHex: thumbprint }))
+        }).toSchema().toBER(false)
+    });
+}
+
 
 // exports
 exports.generateKeyPair = async (algorithmName, keySize) => {
@@ -102,7 +124,7 @@ exports.generateKeyPair = async (algorithmName, keySize) => {
     return await pkijs.getCrypto().generateKey(algorithm.algorithm, true, algorithm.usages);
 }
 
- exports.createCertificate = async (issuerKeyPair, subjectPublicKey, options) => {
+exports.createCertificate = async (issuerKeyPair, subjectPublicKey, options) => {
     validateCertificateOptions(options);
 
     const cert = new pkijs.Certificate();
@@ -123,8 +145,11 @@ exports.generateKeyPair = async (algorithmName, keySize) => {
     if (options.extendedKeyUsages)
         cert.extensions.push(getExtendedKeyUsagesExtension(options.extendedKeyUsages));
 
-    // TODO: support identity and authority key identifiers
-    // TODO: support subject alternative names
+    // Key Identifiers
+    cert.extensions.push(await getSubjectKeyIdentifierExtension(subjectPublicKey));
+    cert.extensions.push(await getAuthorityKeyIdentifierExtension(issuerKeyPair.publicKey));
+
+     // TODO: support subject alternative names
 
     await cert.subjectPublicKeyInfo.importKey(subjectPublicKey);
     await cert.sign(issuerKeyPair.privateKey, "SHA-256");
