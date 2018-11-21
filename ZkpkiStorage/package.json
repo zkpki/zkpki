@@ -7,6 +7,8 @@
     "name": "Matt Peterson"
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.9.0",
     "mocha": "^5.2.0"
   },
   "dependencies": {
