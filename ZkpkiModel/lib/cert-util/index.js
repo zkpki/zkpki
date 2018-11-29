@@ -7,6 +7,7 @@ const asn1js = require("asn1js");
 const crypto = new WebCryptoOpenSsl();
 pkijs.setEngine("ZkPki", crypto, new pkijs.CryptoEngine({ name: "", crypto: crypto, subtle: crypto.subtle }));
 
+const Certificate = require("./certificate.js");
 const conversions = require("./conversions.js");
 const constants = require("./constants.js");
 const startingSerialNumber = 100000;
@@ -34,29 +35,6 @@ function validateCertificateOptions(options) {
                     + "where that property is either 'ip' or 'dns'");
             }
         });
-    }
-}
-
-function getOidForEku(eku) {
-    switch (eku) {
-        case constants.EXTENDED_KEY_USAGES.ServerAuthentication:
-            return "1.3.6.1.5.5.7.3.1";
-        case constants.EXTENDED_KEY_USAGES.ClientAuthentication:
-            return "1.3.6.1.5.5.7.3.2";
-        case constants.EXTENDED_KEY_USAGES.CodeSigning:
-            return "1.3.6.1.5.5.7.3.3";
-        case constants.EXTENDED_KEY_USAGES.EmailProtection:
-            return "1.3.6.1.5.5.7.3.4";
-        case constants.EXTENDED_KEY_USAGES.TimeStamping:
-            return "1.3.6.1.5.5.7.3.8";
-        case constants.EXTENDED_KEY_USAGES.OcspSigning:
-            return "1.3.6.1.5.5.7.3.9";
-        case constants.EXTENDED_KEY_USAGES.MsCertificateTrustListSigning:
-            return "1.3.6.1.4.1.311.10.3.1";
-        case constants.EXTENDED_KEY_USAGES.MsEncryptedFileSystem:
-            return "1.3.6.1.4.1.311.10.3.4";
-        default:
-            throw new Error(`Unknown extended key usage ${eku}`);
     }
 }
 
@@ -88,17 +66,9 @@ function getKeyUsagesExtension(keyUsages, markCritical = false) {
     });
 }
 
-function getExtendedKeyUsagesExtension(ekus, markCritical = false, ...additonalOids) {
-    const numKnownEkus = Object.keys(constants.EXTENDED_KEY_USAGES).length;
-    const purposes = [];
-    for (let i = 0; i < numKnownEkus; i++) {
-        if (ekus & (1 << i)) {
-            purposes.push(getOidForEku(1 << i));
-        }
-    }
-    purposes.push(...additonalOids);
+function getExtendedKeyUsagesExtension(ekuOids, markCritical = false) {
     const extKeyUsage = new pkijs.ExtKeyUsage({
-        keyPurposes: purposes
+        keyPurposes: ekuOids
     });
     return new pkijs.Extension({
         extnID: "2.5.29.37",
@@ -228,11 +198,13 @@ exports.newRootCa = async (distinguishedName, lifetimeDays, algorithm, keySize) 
             lifetimeDays: lifetimeDays || (365 * 10),
             isCa: true,
             keyUsages: constants.KEY_USAGES.KeySignCert | constants.KEY_USAGES.CrlSign,
-            extendedKeyUsages: constants.EXTENDED_KEY_USAGES.MsCertificateTrustListSigning |
-                constants.EXTENDED_KEY_USAGES.ServerAuthentication |
-                constants.EXTENDED_KEY_USAGES.ClientAuthentication |
-                constants.EXTENDED_KEY_USAGES.OcspSigning |
+            extendedKeyUsages: [
+                constants.EXTENDED_KEY_USAGES.MsCertificateTrustListSigning,
+                constants.EXTENDED_KEY_USAGES.ServerAuthentication,
+                constants.EXTENDED_KEY_USAGES.ClientAuthentication,
+                constants.EXTENDED_KEY_USAGES.OcspSigning,
                 constants.EXTENDED_KEY_USAGES.TimeStamping
+            ]
         });
     cert.privateKey =
         conversions.convertToPem("PRIVATE KEY", await pkijs.getCrypto().exportKey("pkcs8", keyPair.privateKey));
@@ -242,3 +214,4 @@ exports.newRootCa = async (distinguishedName, lifetimeDays, algorithm, keySize) 
 exports.ALGORITHMS = constants.ALGORITHMS;
 exports.KEY_USAGES = constants.KEY_USAGES;
 exports.EXTENDED_KEY_USAGES = constants.EXTENDED_KEY_USAGES;
+exports.Certificate = Certificate;

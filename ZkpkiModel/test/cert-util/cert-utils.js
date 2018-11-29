@@ -21,8 +21,10 @@ describe("Certificate creation functions", function() {
                         certUtil.KEY_USAGES.DigitalSignature |
                         certUtil.KEY_USAGES.KeyAgreement |
                         certUtil.KEY_USAGES.KeyEncipherment,
-                    extendedKeyUsages: certUtil.EXTENDED_KEY_USAGES.ServerAuthentication |
+                    extendedKeyUsages: [
+                        certUtil.EXTENDED_KEY_USAGES.ServerAuthentication,
                         certUtil.EXTENDED_KEY_USAGES.ClientAuthentication
+                    ]
                 });
             assert.ok(cert.serialNumber === 123, "Self-signed certificate serial number");
             assert.ok(cert.subject === "CN=foo", "Beautified subject distinguished name");

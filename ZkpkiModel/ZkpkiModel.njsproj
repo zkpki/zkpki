@@ -35,6 +35,7 @@
     </Compile>
     <Compile Include="lib\cert-util\conversions.js" />
     <Compile Include="lib\cert-util\index.js" />
+    <Compile Include="lib\cert-util\certificate.js" />
     <Compile Include="test\cert-util\cert-utils.js">
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
