@@ -7,12 +7,13 @@ const asn1js = require("asn1js");
 const crypto = new WebCryptoOpenSsl();
 pkijs.setEngine("ZkPki", crypto, new pkijs.CryptoEngine({ name: "", crypto: crypto, subtle: crypto.subtle }));
 
-const Certificate = require("./certificate.js");
 const conversions = require("./conversions.js");
 const constants = require("./constants.js");
 const startingSerialNumber = 100000;
 
 const ipAddress = require("ip-address");
+
+const zkpkiFactory = require("./zkpkicertfactory.js");
 
 
 // internal functions
@@ -100,24 +101,26 @@ async function getAuthorityKeyIdentifierExtension(authorityPublicKey) {
     });
 }
 
-function parseIpAddress(ipaddressString) {
-    const addr4 = new ipAddress.Address4(ipaddressString);
-    if (addr4.isValid())
-        return addr4.toByteArray();
-    const addr6 = new ipAddress.Address6(ipaddressString);
-    if (addr6.isValid())
-        return addr6.toByteArray();
-    throw new Error(`${ipaddressString} is not a valid IP address`);
+function parseIpAddress(ipAddressString) {
+    const address4 = new ipAddress.Address4(ipAddressString);
+    if (address4.isValid())
+        return address4.toArray();
+    const address6 = new ipAddress.Address6(ipAddressString);
+    if (address6.isValid())
+        return address6.toByteArray();
+    throw new Error(`${ipAddressString} is not a valid IP address`);
 }
 
 function getSubjectAlternativeNamesExtension(subjectAlternativeNames) {
     const names = [];
     subjectAlternativeNames.forEach(sAN => {
         if ("ip" in sAN) {
-
+            const ipAddress = parseIpAddress(sAN.ip);
             names.push(new pkijs.GeneralName({
                 type: 7, // iPAddress
-                value: new asn1js.OctetString({ valueHex: (new Uint8Array([0xC0, 0xA8, 0x00, 0x01])).buffer })
+                value: new asn1js.OctetString({
+                    valueHex: (new Uint8Array([ipAddress[0], ipAddress[1], ipAddress[2], ipAddress[3]])).buffer
+                })
             }));
         }
         if ("dns" in sAN) 
@@ -145,14 +148,14 @@ exports.generateKeyPair = async (algorithmName, keySize) => {
     return await pkijs.getCrypto().generateKey(algorithm.algorithm, true, algorithm.usages);
 }
 
-exports.createCertificate = async (issuerKeyPair, subjectPublicKey, options) => {
+exports.createCertificate = async (issuerKeyPair, subjectPublicKey, options = {}) => {
     validateCertificateOptions(options);
 
     const cert = new pkijs.Certificate();
     cert.version = 2;
-    cert.serialNumber = new asn1js.Integer({ value: 1 });
-    cert.issuer.typesAndValues = conversions.createDistinguishedName(options.issuerDn);
-    cert.subject.typesAndValues = conversions.createDistinguishedName(options.subjectDn);
+    cert.serialNumber = new asn1js.Integer({ value: options.serialNumber });
+    cert.issuer.typesAndValues = conversions.stringToDnTypesAndValues(options.issuerDn);
+    cert.subject.typesAndValues = conversions.stringToDnTypesAndValues(options.subjectDn);
     [cert.notBefore.value, cert.notAfter.value] = conversions.getCertificateDateRange(options.lifetimeDays);
 
     // Basic Constraints
@@ -177,19 +180,12 @@ exports.createCertificate = async (issuerKeyPair, subjectPublicKey, options) => 
     await cert.subjectPublicKeyInfo.importKey(subjectPublicKey);
     await cert.sign(issuerKeyPair.privateKey, "SHA-256");
 
-    return {
-        serialNumber: options.serialNumber,
-        subject: conversions.beautifyDistinguishedName(options.subjectDn),
-        issuedDate: cert.notBefore.value,
-        expirationDate: cert.notAfter.value,
-        certificate: conversions.convertToPem("CERTIFICATE", await cert.toSchema(true).toBER(false)),
-        privateKey: null
-    };
+    return zkpkiFactory.create({ certificate: cert });
 }
 
-exports.newRootCa = async (distinguishedName, lifetimeDays, algorithm, keySize) => {
+exports.newRootCertificateAuthority = async (distinguishedName, lifetimeDays, algorithm, keySize) => {
     const keyPair = await exports.generateKeyPair(algorithm || constants.ALGORITHMS.RsaSsaPkcs1V1_5, keySize || 2048);
-    const cert = await exports.createCertificate(keyPair,
+    const zkpkicert = await exports.createCertificate(keyPair,
         keyPair.publicKey,
         {
             serialNumber: startingSerialNumber,
@@ -206,12 +202,11 @@ exports.newRootCa = async (distinguishedName, lifetimeDays, algorithm, keySize) 
                 constants.EXTENDED_KEY_USAGES.TimeStamping
             ]
         });
-    cert.privateKey =
-        conversions.convertToPem("PRIVATE KEY", await pkijs.getCrypto().exportKey("pkcs8", keyPair.privateKey));
-    return cert;
+    zkpkicert.privateKeyPemData =
+        conversions.berToPem("PRIVATE KEY", await pkijs.getCrypto().exportKey("pkcs8", keyPair.privateKey));
+    return zkpkicert;
 }
 
 exports.ALGORITHMS = constants.ALGORITHMS;
 exports.KEY_USAGES = constants.KEY_USAGES;
 exports.EXTENDED_KEY_USAGES = constants.EXTENDED_KEY_USAGES;
-exports.Certificate = Certificate;
