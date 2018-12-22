@@ -13,6 +13,8 @@ const startingSerialNumber = 100000;
 
 const ipAddress = require("ip-address");
 
+const zkpkiFactory = require("./zkpkicertfactory.js");
+
 
 // internal functions
 function validateCertificateOptions(options) {
@@ -34,29 +36,6 @@ function validateCertificateOptions(options) {
                     + "where that property is either 'ip' or 'dns'");
             }
         });
-    }
-}
-
-function getOidForEku(eku) {
-    switch (eku) {
-        case constants.EXTENDED_KEY_USAGES.ServerAuthentication:
-            return "1.3.6.1.5.5.7.3.1";
-        case constants.EXTENDED_KEY_USAGES.ClientAuthentication:
-            return "1.3.6.1.5.5.7.3.2";
-        case constants.EXTENDED_KEY_USAGES.CodeSigning:
-            return "1.3.6.1.5.5.7.3.3";
-        case constants.EXTENDED_KEY_USAGES.EmailProtection:
-            return "1.3.6.1.5.5.7.3.4";
-        case constants.EXTENDED_KEY_USAGES.TimeStamping:
-            return "1.3.6.1.5.5.7.3.8";
-        case constants.EXTENDED_KEY_USAGES.OcspSigning:
-            return "1.3.6.1.5.5.7.3.9";
-        case constants.EXTENDED_KEY_USAGES.MsCertificateTrustListSigning:
-            return "1.3.6.1.4.1.311.10.3.1";
-        case constants.EXTENDED_KEY_USAGES.MsEncryptedFileSystem:
-            return "1.3.6.1.4.1.311.10.3.4";
-        default:
-            throw new Error(`Unknown extended key usage ${eku}`);
     }
 }
 
@@ -88,17 +67,9 @@ function getKeyUsagesExtension(keyUsages, markCritical = false) {
     });
 }
 
-function getExtendedKeyUsagesExtension(ekus, markCritical = false, ...additonalOids) {
-    const numKnownEkus = Object.keys(constants.EXTENDED_KEY_USAGES).length;
-    const purposes = [];
-    for (let i = 0; i < numKnownEkus; i++) {
-        if (ekus & (1 << i)) {
-            purposes.push(getOidForEku(1 << i));
-        }
-    }
-    purposes.push(...additonalOids);
+function getExtendedKeyUsagesExtension(ekuOids, markCritical = false) {
     const extKeyUsage = new pkijs.ExtKeyUsage({
-        keyPurposes: purposes
+        keyPurposes: ekuOids
     });
     return new pkijs.Extension({
         extnID: "2.5.29.37",
@@ -130,24 +101,26 @@ async function getAuthorityKeyIdentifierExtension(authorityPublicKey) {
     });
 }
 
-function parseIpAddress(ipaddressString) {
-    const addr4 = new ipAddress.Address4(ipaddressString);
-    if (addr4.isValid())
-        return addr4.toByteArray();
-    const addr6 = new ipAddress.Address6(ipaddressString);
-    if (addr6.isValid())
-        return addr6.toByteArray();
-    throw new Error(`${ipaddressString} is not a valid IP address`);
+function parseIpAddress(ipAddressString) {
+    const address4 = new ipAddress.Address4(ipAddressString);
+    if (address4.isValid())
+        return address4.toArray();
+    const address6 = new ipAddress.Address6(ipAddressString);
+    if (address6.isValid())
+        return address6.toByteArray();
+    throw new Error(`${ipAddressString} is not a valid IP address`);
 }
 
 function getSubjectAlternativeNamesExtension(subjectAlternativeNames) {
     const names = [];
     subjectAlternativeNames.forEach(sAN => {
         if ("ip" in sAN) {
-
+            const ipAddress = parseIpAddress(sAN.ip);
             names.push(new pkijs.GeneralName({
                 type: 7, // iPAddress
-                value: new asn1js.OctetString({ valueHex: (new Uint8Array([0xC0, 0xA8, 0x00, 0x01])).buffer })
+                value: new asn1js.OctetString({
+                    valueHex: (new Uint8Array([ipAddress[0], ipAddress[1], ipAddress[2], ipAddress[3]])).buffer
+                })
             }));
         }
         if ("dns" in sAN) 
@@ -175,14 +148,14 @@ exports.generateKeyPair = async (algorithmName, keySize) => {
     return await pkijs.getCrypto().generateKey(algorithm.algorithm, true, algorithm.usages);
 }
 
-exports.createCertificate = async (issuerKeyPair, subjectPublicKey, options) => {
+exports.createCertificate = async (issuerKeyPair, subjectPublicKey, options = {}) => {
     validateCertificateOptions(options);
 
     const cert = new pkijs.Certificate();
     cert.version = 2;
-    cert.serialNumber = new asn1js.Integer({ value: 1 });
-    cert.issuer.typesAndValues = conversions.createDistinguishedName(options.issuerDn);
-    cert.subject.typesAndValues = conversions.createDistinguishedName(options.subjectDn);
+    cert.serialNumber = new asn1js.Integer({ value: options.serialNumber });
+    cert.issuer.typesAndValues = conversions.stringToDnTypesAndValues(options.issuerDn);
+    cert.subject.typesAndValues = conversions.stringToDnTypesAndValues(options.subjectDn);
     [cert.notBefore.value, cert.notAfter.value] = conversions.getCertificateDateRange(options.lifetimeDays);
 
     // Basic Constraints
@@ -207,19 +180,12 @@ exports.createCertificate = async (issuerKeyPair, subjectPublicKey, options) => 
     await cert.subjectPublicKeyInfo.importKey(subjectPublicKey);
     await cert.sign(issuerKeyPair.privateKey, "SHA-256");
 
-    return {
-        serialNumber: options.serialNumber,
-        subject: conversions.beautifyDistinguishedName(options.subjectDn),
-        issuedDate: cert.notBefore.value,
-        expirationDate: cert.notAfter.value,
-        certificate: conversions.convertToPem("CERTIFICATE", await cert.toSchema(true).toBER(false)),
-        privateKey: null
-    };
+    return zkpkiFactory.create({ certificate: cert });
 }
 
-exports.newRootCa = async (distinguishedName, lifetimeDays, algorithm, keySize) => {
+exports.newRootCertificateAuthority = async (distinguishedName, lifetimeDays, algorithm, keySize) => {
     const keyPair = await exports.generateKeyPair(algorithm || constants.ALGORITHMS.RsaSsaPkcs1V1_5, keySize || 2048);
-    const cert = await exports.createCertificate(keyPair,
+    const zkpkicert = await exports.createCertificate(keyPair,
         keyPair.publicKey,
         {
             serialNumber: startingSerialNumber,
@@ -228,15 +194,17 @@ exports.newRootCa = async (distinguishedName, lifetimeDays, algorithm, keySize) 
             lifetimeDays: lifetimeDays || (365 * 10),
             isCa: true,
             keyUsages: constants.KEY_USAGES.KeySignCert | constants.KEY_USAGES.CrlSign,
-            extendedKeyUsages: constants.EXTENDED_KEY_USAGES.MsCertificateTrustListSigning |
-                constants.EXTENDED_KEY_USAGES.ServerAuthentication |
-                constants.EXTENDED_KEY_USAGES.ClientAuthentication |
-                constants.EXTENDED_KEY_USAGES.OcspSigning |
+            extendedKeyUsages: [
+                constants.EXTENDED_KEY_USAGES.MsCertificateTrustListSigning,
+                constants.EXTENDED_KEY_USAGES.ServerAuthentication,
+                constants.EXTENDED_KEY_USAGES.ClientAuthentication,
+                constants.EXTENDED_KEY_USAGES.OcspSigning,
                 constants.EXTENDED_KEY_USAGES.TimeStamping
+            ]
         });
-    cert.privateKey =
-        conversions.convertToPem("PRIVATE KEY", await pkijs.getCrypto().exportKey("pkcs8", keyPair.privateKey));
-    return cert;
+    zkpkicert.privateKeyPemData =
+        conversions.berToPem("PRIVATE KEY", await pkijs.getCrypto().exportKey("pkcs8", keyPair.privateKey));
+    return zkpkicert;
 }
 
 exports.ALGORITHMS = constants.ALGORITHMS;

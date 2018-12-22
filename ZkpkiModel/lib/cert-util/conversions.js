@@ -78,6 +78,79 @@ function getOidForDnAttribute(attr) {
     }
 }
 
+function getDnAttributeForOid(oid) {
+    switch (oid) {
+        // RFC 5280 (4.1.2.4) attributes listed as MUST support:
+        // * country,
+        case "2.5.4.6":
+            return "C";
+        // * organization,
+        case "2.5.4.10":
+            return "O";
+        // * organizational unit,
+        case "2.5.4.11":
+            return "OU";
+        // * distinguished name qualifier,
+        case "2.5.4.46":
+            return "dnQualifer";
+        // * state or province name,
+        case "2.5.4.8":
+            return "S";
+        // * common name(e.g., "Dan Peterson"), and
+        case "2.5.4.3":
+            return "CN";
+        // * serial number.
+        // ReSharper disable once StringLiteralTypo
+        case "2.5.4.5":
+            return "SERIALNUMBER";
+
+        // RFC 5280 (4.1.2.4) attributes listed as SHOULD support:
+        // * locality,
+        case "2.5.4.7":
+            return "L";
+        // * title,
+        case "2.5.4.12":
+            return "T";
+        // * surname,
+        case "2.5.4.4":
+            return "SN";
+        // * given name,
+        case "2.5.4.42":
+            return "G";
+        // * initials,
+        case "2.5.4.43":
+            return "I";
+        // * pseudonym, and
+        case "2.5.4.65":
+            return "2.5.4.65";
+        //  * generation qualifier(e.g., "Jr.", "3rd", or "IV").
+        case "2.5.4.44":
+            return "2.5.4.44";
+
+        // Also...
+        // * domain component
+        case "0.9.2342.19200300.100.1.25":
+            return "DC";
+        // * email address
+        case "1.2.840.113549.1.9.1":
+            return "E";
+        // * rfc822Mailbox
+        case "0.9.2342.19200300.100.1.3":
+            return "MAIL";
+        // * user ID
+        case "0.9.2342.19200300.100.1.1":
+            return "UID";
+        // ReSharper disable once StringLiteralTypo
+        case "1.2.840.113549.1.9.2":
+            return "UNSTRUCTUREDNAME";
+        // ReSharper disable once StringLiteralTypo
+        case "1.2.840.113549.1.9.8":
+            return "UNSTRUCTUREDADDRESS";
+        default:
+            throw new Error(`Unknown DN attribute OID ${oid}`);
+    }
+}
+
 exports.beautifyDistinguishedName = (dnString) => {
     let prettyDn = "";
     dnString.split(",").forEach(function(dnPart) {
@@ -89,21 +162,31 @@ exports.beautifyDistinguishedName = (dnString) => {
     return prettyDn.slice(0, -1);
 }
 
-exports.createDistinguishedName = (dnString) => {
-    const relativeNames = [];
+exports.stringToDnTypesAndValues = (dnString) => {
+    const dnTypesAndValues = [];
     dnString.split(",").forEach(function(dnPart) {
         const [attr, value] = dnPart.split("=");
         if (!attr || !value)
             throw new Error(`distinguishedName ${dnPart} did not parse`);
-        relativeNames.push(new pkijs.AttributeTypeAndValue({
+        dnTypesAndValues.push(new pkijs.AttributeTypeAndValue({
             type: getOidForDnAttribute(attr),
             value: new asn1js.PrintableString({ value: value })
         }));
     });
-    if (relativeNames.length === 0) {
+    if (dnTypesAndValues.length === 0) {
         throw new Error(`Unable to parse distinguished name from ${dnString}`);
     }
-    return relativeNames;
+    return dnTypesAndValues;
+}
+
+exports.dnTypesAndValuesToString = (dnTypesAndValues) => {
+    let dnString = "";
+    dnTypesAndValues.forEach(function (dnAttrAndValue) {
+        let dnAttr = getDnAttributeForOid(dnAttrAndValue.type);
+        let dnValue = dnAttrAndValue.value.valueBlock.value;
+        dnString = dnString.concat(`${dnAttr}=${dnValue},`);
+    });
+    return dnString.slice(0, -1);
 }
 
 exports.getCertificateDateRange = (numDays) => {
@@ -114,9 +197,9 @@ exports.getCertificateDateRange = (numDays) => {
     return [today, expire];
 }
 
-exports.convertToPem = (label, berArray) => {
+exports.berToPem = (label, berArray) => {
     if (!label || !berArray)
-        throw new Error("Both the label and the BER array are required to generate PEM.")
+        throw new Error("Both the label and the BER array are required to generate PEM.");
     const octetString = String.fromCharCode.apply(null, new Uint8Array(berArray));
     const b64String = btoa(octetString);
     const stringLength = b64String.length;

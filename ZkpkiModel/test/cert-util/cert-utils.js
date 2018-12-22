@@ -21,19 +21,21 @@ describe("Certificate creation functions", function() {
                         certUtil.KEY_USAGES.DigitalSignature |
                         certUtil.KEY_USAGES.KeyAgreement |
                         certUtil.KEY_USAGES.KeyEncipherment,
-                    extendedKeyUsages: certUtil.EXTENDED_KEY_USAGES.ServerAuthentication |
+                    extendedKeyUsages: [
+                        certUtil.EXTENDED_KEY_USAGES.ServerAuthentication,
                         certUtil.EXTENDED_KEY_USAGES.ClientAuthentication
+                    ]
                 });
             assert.ok(cert.serialNumber === 123, "Self-signed certificate serial number");
             assert.ok(cert.subject === "CN=foo", "Beautified subject distinguished name");
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            assert.ok(cert.issuedDate.getTime() === today.getTime(), "Issued today");
+            assert.ok(cert.issueDate.getTime() === today.getTime(), "Issued today");
             const expire = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             expire.setDate(expire.getDate() + (365 * 10));
             assert.ok(cert.expirationDate.getTime() === expire.getTime(), "Expires in 5 years");
-            assert.ok(cert.certificate, "Certificate PEM is not empty");
-            assert.ok(cert.privateKey === null, "Private key PEM is empty");
+            assert.ok(cert.certificatePemData, "Certificate PEM is not empty");
+            assert.ok(cert.privateKeyPemData === null, "Private key PEM is empty");
             // TODO: parse certificate and check values directly
             // TODO: check that authority key identifier matches subject key identifier
         });
@@ -41,7 +43,7 @@ describe("Certificate creation functions", function() {
     it("Create new Root CA",
         async function() {
             const cert =
-                await certUtil.newRootCa("cn=dan peterson,o=company,c=US",
+                await certUtil.newRootCertificateAuthority("cn=dan peterson,o=company,c=US",
                     365 * 5,
                     certUtil.ALGORITHMS.RsaSsaPkcs1V1_5,
                     2048);
@@ -49,12 +51,12 @@ describe("Certificate creation functions", function() {
             assert.ok(cert.subject === "CN=dan peterson,O=company,C=US", "Beautified subject distinguished name");
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            assert.ok(cert.issuedDate.getTime() === today.getTime(), "Issued today");
+            assert.ok(cert.issueDate.getTime() === today.getTime(), "Issued today");
             const expire = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             expire.setDate(expire.getDate() + (365 * 5));
             assert.ok(cert.expirationDate.getTime() === expire.getTime(), "Expires in 5 years");
-            assert.ok(cert.certificate, "Certificate PEM is not empty");
-            assert.ok(cert.privateKey, "Private key PEM is not empty");
+            assert.ok(cert.certificatePemData, "Certificate PEM is not empty");
+            assert.ok(cert.privateKeyPemData, "Private key PEM is not empty");
             // TODO: parse certificate and check values directly
             // TODO: check that authority key identifier matches subject key identifier
         });

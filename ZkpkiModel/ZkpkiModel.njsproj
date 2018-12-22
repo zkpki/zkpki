@@ -35,6 +35,10 @@
     </Compile>
     <Compile Include="lib\cert-util\conversions.js" />
     <Compile Include="lib\cert-util\index.js" />
+    <Compile Include="lib\cert-util\zkpkicert.js" />
+    <Compile Include="lib\cert-util\zkpkicertfactory.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="test\cert-util\cert-utils.js">
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>

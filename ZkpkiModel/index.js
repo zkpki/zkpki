@@ -3,7 +3,7 @@
 // hack for console testing of cert-util... TODO: need proper model module
 try {
     const certUtil = require("./lib/cert-util");
-    certUtil.newRootCa("cn=dan,o=company,c=US").then(certificate => {
+    certUtil.newRootCertificateAuthority("cn=dan,o=company,c=US").then(certificate => {
         console.log(certificate);
         console.log(certificate.certificate);
     }).catch(error => {
