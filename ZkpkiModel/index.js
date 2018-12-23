@@ -1,7 +1,7 @@
 "use strict";
 
 let ZkPkiModel = function() {
-    const zkpkiCertFactory = require("./zkpkicertfactory");
+    const zkpkiCertFactory = require("./lib/zkpkicertfactory");
 
     const tenYears = 3652;
 
@@ -11,7 +11,7 @@ let ZkPkiModel = function() {
     this.settings = null; // TODO:
 
     // reveal cert-util
-    this.certUtil = require("./cert-util");
+    this.certUtil = require("./lib/cert-util");
 
     // methods
     this.initialize = async (distinguishedName, algorithm, keySize) => {
