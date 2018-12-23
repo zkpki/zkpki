@@ -1,6 +1,6 @@
 "use strict";
 
-let conversions = require("./conversions.js");
+const certUtil = require("../cert-util");
 
 let zkPkiCert = function (parameters = {}) {
     if (parameters.certificatePemData !== undefined) {
@@ -27,12 +27,12 @@ Object.defineProperty(zkPkiCert.prototype, "serialNumber", {
 });
 Object.defineProperty(zkPkiCert.prototype, "subject", {
     get: function subject() {
-        return conversions.dnTypesAndValuesToString(this.certificate.subject.typesAndValues);
+        return certUtil.conversions.dnTypesAndValuesToString(this.certificate.subject.typesAndValues);
     }
 });
 Object.defineProperty(zkPkiCert.prototype, "issuer", {
     get: function issuer() {
-        return conversions.dnTypesAndValuesToString(this.certificate.issuer.typesAndValues);
+        return certUtil.conversions.dnTypesAndValuesToString(this.certificate.issuer.typesAndValues);
     }
 });
 Object.defineProperty(zkPkiCert.prototype, "issueDate", {
