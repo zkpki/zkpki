@@ -44,6 +44,10 @@
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
     </Compile>
+    <Compile Include="test\zkpki-model.js">
+      <SubType>Code</SubType>
+      <TestFramework>Mocha</TestFramework>
+    </Compile>
     <Compile Include="test\zkpkicertfactory\rawcert.js">
       <TestFramework>Mocha</TestFramework>
     </Compile>
