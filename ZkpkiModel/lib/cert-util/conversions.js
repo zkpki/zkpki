@@ -151,7 +151,7 @@ function getDnAttributeForOid(oid) {
     }
 }
 
-exports.beautifyDistinguishedName = (dnString) => {
+exports.beautifyDnString = (dnString) => {
     let prettyDn = "";
     dnString.split(",").forEach(function(dnPart) {
         const [attr, value] = dnPart.split("=");
@@ -162,7 +162,7 @@ exports.beautifyDistinguishedName = (dnString) => {
     return prettyDn.slice(0, -1);
 }
 
-exports.stringToDnTypesAndValues = (dnString) => {
+exports.dnStringToDnTypesAndValues = (dnString) => {
     const dnTypesAndValues = [];
     dnString.split(",").forEach(function(dnPart) {
         const [attr, value] = dnPart.split("=");
@@ -179,7 +179,7 @@ exports.stringToDnTypesAndValues = (dnString) => {
     return dnTypesAndValues;
 }
 
-exports.dnTypesAndValuesToString = (dnTypesAndValues) => {
+exports.dnTypesAndValuesToDnString = (dnTypesAndValues) => {
     let dnString = "";
     dnTypesAndValues.forEach(function (dnAttrAndValue) {
         let dnAttr = getDnAttributeForOid(dnAttrAndValue.type);

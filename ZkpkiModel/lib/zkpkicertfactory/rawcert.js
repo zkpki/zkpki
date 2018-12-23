@@ -127,9 +127,10 @@ exports.createRawCertificate = async (issuerKeyPair, subjectPublicKey, options =
     const rawCert = new pkijs.Certificate();
     rawCert.version = 2;
     rawCert.serialNumber = new asn1js.Integer({ value: options.serialNumber });
-    rawCert.issuer.typesAndValues = conversions.stringToDnTypesAndValues(options.issuerDn);
-    rawCert.subject.typesAndValues = conversions.stringToDnTypesAndValues(options.subjectDn);
-    [rawCert.notBefore.value, rawCert.notAfter.value] = conversions.getCertificateDateRange(options.lifetimeDays);
+    rawCert.issuer.typesAndValues = certUtil.conversions.dnStringToDnTypesAndValues(options.issuerDn);
+    rawCert.subject.typesAndValues = certUtil.conversions.dnStringToDnTypesAndValues(options.subjectDn);
+    [rawCert.notBefore.value, rawCert.notAfter.value] =
+        certUtil.conversions.getCertificateDateRange(options.lifetimeDays);
 
     // Basic Constraints
     rawCert.extensions = [];

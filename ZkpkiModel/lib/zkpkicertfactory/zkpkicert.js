@@ -27,12 +27,12 @@ Object.defineProperty(zkPkiCert.prototype, "serialNumber", {
 });
 Object.defineProperty(zkPkiCert.prototype, "subject", {
     get: function subject() {
-        return certUtil.conversions.dnTypesAndValuesToString(this.certificate.subject.typesAndValues);
+        return certUtil.conversions.dnTypesAndValuesToDnString(this.certificate.subject.typesAndValues);
     }
 });
 Object.defineProperty(zkPkiCert.prototype, "issuer", {
     get: function issuer() {
-        return certUtil.conversions.dnTypesAndValuesToString(this.certificate.issuer.typesAndValues);
+        return certUtil.conversions.dnTypesAndValuesToDnString(this.certificate.issuer.typesAndValues);
     }
 });
 Object.defineProperty(zkPkiCert.prototype, "issueDate", {

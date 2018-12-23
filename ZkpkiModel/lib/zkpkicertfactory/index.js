@@ -52,8 +52,9 @@ let ZkPkiCertFactory = function () {
 
     // create zkpki root certificate authority
     this.createCertificateAuthority = async (distinguishedName, lifetimeDays, algorithm, keySize) => {
-        const keyPair = await generateKeyPair(algorithm || certUtil.ALGORITHMS.RsaSsaPkcs1V1_5, keySize || 2048);
-        const zkpkiCert = await createCertificate(keyPair,
+        const keyPair =
+            await rawCert.generateKeyPair(algorithm || certUtil.ALGORITHMS.RsaSsaPkcs1V1_5, keySize || 2048);
+        const zkpkiCert = await this.createCertificate(keyPair,
             keyPair.publicKey,
             {
                 serialNumber: startingSerialNumber,
@@ -78,7 +79,9 @@ let ZkPkiCertFactory = function () {
     // create zkpki certificate from options
     this.createCertificate = async (issuerKeyPair, subjectPublicKey, options = {}) => {
         validateCertificateOptions(options);
-        return this.load({ certificate: await rawCert.createCertificate(issuerKeyPair, subjectPublicKey, options) });
+        return this.loadCertificate({
+            certificate: await rawCert.createRawCertificate(issuerKeyPair, subjectPublicKey, options)
+        });
     }
 
     // create zkpki certificate from CSR

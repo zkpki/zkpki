@@ -5,14 +5,14 @@ describe("Cert Util Conversions",
     function() {
         it("Beautify DN String",
             async function() {
-                assert.equal(certUtil.conversions.beautifyDistinguishedName("cn=foo"), "CN=foo", "Single DN Part");
-                assert.equal(certUtil.conversions.beautifyDistinguishedName("Cn=foo"), "CN=foo", "Camel DN Type");
-                assert.equal(certUtil.conversions.beautifyDistinguishedName("cn=Capitalized Name",
+                assert.equal(certUtil.conversions.beautifyDnString("cn=foo"), "CN=foo", "Single DN Part");
+                assert.equal(certUtil.conversions.beautifyDnString("Cn=foo"), "CN=foo", "Camel DN Type");
+                assert.equal(certUtil.conversions.beautifyDnString("cn=Capitalized Name"),
                     "CN=Capitalized Name",
-                    "Capitalized Name"));
-                assert.equal(certUtil.conversions.beautifyDistinguishedName("cn=dan,o=zkpki,c=US",
+                    "Capitalized Name");
+                assert.equal(certUtil.conversions.beautifyDnString("cn=dan,o=zkpki,c=US"),
                     "CN=dan,O=zkpki,C=US",
-                    "Multipart DN"));
+                    "Multipart DN");
             });
 
         it("DN String to DN Data Types and Values",
