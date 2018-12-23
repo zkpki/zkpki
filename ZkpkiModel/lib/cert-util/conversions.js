@@ -213,3 +213,9 @@ exports.berToPem = (label, berArray) => {
     }
     return resultString + `\r\n-----END ${label.toUpperCase()}-----`;
 }
+
+exports.pemToBer = (pemData) => {
+    const pemDataNoLabel = pemData.replace(/-----.*?-----/, "");
+    const b64String = pemDataNoLabel.replace(/\r|\n/, "");
+    return atob(b64String);
+}
