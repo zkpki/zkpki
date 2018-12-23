@@ -1,4 +1,4 @@
-const assert = require("assert");
+const assert = require("assert").strict;
 const rawCert = require("../../lib/zkpkicertfactory/rawcert.js");
 
 describe("Raw Certificate Functions",

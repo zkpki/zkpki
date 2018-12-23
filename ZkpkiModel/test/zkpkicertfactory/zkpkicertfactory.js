@@ -1,4 +1,4 @@
-const assert = require("assert");
+const assert = require("assert").strict;
 const certUtil = require("../../lib/cert-util");
 const zkpkiCertFactory = require("../../lib/zkpkicertfactory");
 

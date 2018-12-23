@@ -45,5 +45,6 @@ Object.defineProperty(zkPkiCert.prototype, "expirationDate", {
         return this.certificate.notAfter.value;
     }
 });
+// TODO: add algorithm and key size
 
 module.exports = zkPkiCert;

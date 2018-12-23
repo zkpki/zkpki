@@ -1,4 +1,4 @@
-const assert = require("assert");
+const assert = require("assert").strict;
 const ZkPkiCert = require("./zkpkicert.js");
 
 describe("ZKPKI Certificate Object",
