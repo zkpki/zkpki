@@ -215,7 +215,7 @@ exports.berToPem = (label, berArray) => {
 }
 
 exports.pemToBer = (pemData) => {
-    const pemDataNoLabel = pemData.replace(/-----.*?-----/, "");
-    const b64String = pemDataNoLabel.replace(/\r|\n/, "");
+    const pemDataNoLabel = pemData.replace(/-----.*?-----/g, "");
+    const b64String = pemDataNoLabel.replace(/\r|\n/g, "");
     return atob(b64String);
 }
