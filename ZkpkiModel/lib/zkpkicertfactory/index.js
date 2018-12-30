@@ -38,7 +38,8 @@ let ZkPkiCertFactory = function () {
     // load zkpki certificate from PEM data or raw pkijs
     this.loadCertificate = async (parameters = {}) => {
         let zkpkiCert = new ZkPkiCert(parameters);
-
+        // because generating PEM data from raw pkijs requires async function
+        // we have to put this logic here rather than in the ZkPkiCert constructor
         if (zkpkiCert.certificatePemData === null && zkpkiCert.certificate === null) {
             throw new Error("Unable to create ZkPkiCert with no certificate object and no PEM");
         } else if (zkpkiCert.certificatePemData === null && zkpkiCert.certificate !== null) {

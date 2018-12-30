@@ -157,7 +157,7 @@ exports.createRawCertificate = async (issuerKeyPair, subjectPublicKey, options =
     return rawCert;
 }
 
-exports.parseRawCertificate = () => {
+exports.parseRawCertificate = (certificateBuffer) => {
     const asn1 = asn1js.fromBER(certificateBuffer);
     return new pkijs.Certificate({ schema: asn1.result });
 }

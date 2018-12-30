@@ -4,8 +4,13 @@ const zkpkiCertFactory = require("../../lib/zkpkicertfactory");
 
 describe("ZKIPKI Certificate Factory",
     function() {
-        it("Load Certificate",
+        it("Load Certificate From PEM",
             async function () {
+                assert.ok(false); // TODO:
+            });
+
+        it("Load Certificate From Raw",
+            async function() {
                 assert.ok(false); // TODO:
             });
 
