@@ -35,12 +35,26 @@
     </Compile>
     <Compile Include="lib\cert-util\conversions.js" />
     <Compile Include="lib\cert-util\index.js" />
-    <Compile Include="lib\cert-util\zkpkicert.js" />
-    <Compile Include="lib\cert-util\zkpkicertfactory.js">
+    <Compile Include="lib\zkpkicertfactory\rawcert.js" />
+    <Compile Include="lib\zkpkicertfactory\zkpkicert.js" />
+    <Compile Include="lib\zkpkicertfactory\index.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test\cert-util\cert-utils.js">
       <SubType>Code</SubType>
+      <TestFramework>Mocha</TestFramework>
+    </Compile>
+    <Compile Include="test\zkpki-model.js">
+      <SubType>Code</SubType>
+      <TestFramework>Mocha</TestFramework>
+    </Compile>
+    <Compile Include="test\zkpkicertfactory\rawcert.js">
+      <TestFramework>Mocha</TestFramework>
+    </Compile>
+    <Compile Include="test\zkpkicertfactory\zkpkicert.js">
+      <TestFramework>Mocha</TestFramework>
+    </Compile>
+    <Compile Include="test\zkpkicertfactory\zkpkicertfactory.js">
       <TestFramework>Mocha</TestFramework>
     </Compile>
     <Content Include="package.json" />
@@ -49,8 +63,10 @@
   <ItemGroup>
     <Folder Include="lib\" />
     <Folder Include="lib\cert-util\" />
+    <Folder Include="lib\zkpkicertfactory\" />
     <Folder Include="test\" />
     <Folder Include="test\cert-util\" />
+    <Folder Include="test\zkpkicertfactory\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

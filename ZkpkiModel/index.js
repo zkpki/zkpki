@@ -1,25 +1,29 @@
 "use strict";
 
-// hack for console testing of cert-util... TODO: need proper model module
-try {
-    const certUtil = require("./lib/cert-util");
-    certUtil.newRootCertificateAuthority("cn=dan,o=company,c=US").then(certificate => {
-        console.log(certificate);
-        console.log(certificate.certificate);
-    }).catch(error => {
-        console.log(error);
-    });
-} catch (error) {
-    console.log(error);
+let ZkPkiModel = function() {
+    const zkpkiCertFactory = require("./lib/zkpkicertfactory");
+
+    const tenYears = 3652;
+
+    // properties
+    this.rootCa = null;
+    this.certificates = [];
+    this.settings = null; // TODO:
+
+    // reveal cert-util
+    this.certUtil = require("./lib/cert-util");
+
+    // methods
+    this.initialize = async (distinguishedName, algorithm, keySize) => {
+        this.rootCa = zkpkiCertFactory.createCertificateAuthority(distinguishedName, tenYears, algorithm, keySize);
+        this.certificates = []; // clear out certificates
+    }
 }
+
+module.exports = new ZkPkiModel();
 
 
 /*
-exports.initialize = async (distinguishedName, algorithm, keySize) => {
-    // TODO: create new rootCa
-
-}
-
  exports.deserialize = async (payload) => {
     // TODO: deserialize from decrypted payload
 
@@ -35,17 +39,4 @@ exports.issueCertificate = (options) => {
 
 }
 
-
-
-// TODO: key model properties
-
-exports.rootCa = null;
-exports.certificates = [];
-
-// TODO: settings??
-
-this.settings = null;
-
-
-};
 */
