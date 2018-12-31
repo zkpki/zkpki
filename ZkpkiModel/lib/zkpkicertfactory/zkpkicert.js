@@ -32,9 +32,10 @@ Object.defineProperty(zkPkiCert.prototype, "checkContainsRaw", {
 Object.defineProperty(zkPkiCert.prototype, "serialNumber", {
     get: function serialNumber() {
         this.checkContainsRaw();
-        return Array.prototype.map.call(
+        const b64String = Array.prototype.map.call(
             new Uint8Array(this.certificate.serialNumber.valueBlock.valueHex),
-            x => (x.toString(16)).slice(-2)).join('');
+            x => ("00" + x.toString(16)).slice(-2)).join('');
+        return b64String.replace(/^0+/, ""); // remove leading zeros if present
     }
 });
 Object.defineProperty(zkPkiCert.prototype, "subject", {

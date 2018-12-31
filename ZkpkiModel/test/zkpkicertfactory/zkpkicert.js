@@ -5,6 +5,7 @@ const certUtil = require("../../lib/cert-util");
 
 describe("ZKPKI Certificate Object",
     function () {
+        // PEM file generated from Microsoft Certificate Services CA
         const certPemString = `-----BEGIN CERTIFICATE-----
 MIIGTjCCBDagAwIBAgITfAAAAAKPcCSI5peWcwAAAAAAAjANBgkqhkiG9w0BAQsF
 ADAxMQswCQYDVQQGEwJVUzEMMAoGA1UEChMDREFOMRQwEgYDVQQDEwtEQU4gUm9v
@@ -117,11 +118,19 @@ rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
 
         it("Issue Date Property",
             async function () {
-                assert.ok(false); // TODO:
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                const issueDate = new Date(2016, 4, 23, 13, 7, 19, 0); // May 23, 2016 -- 13:07:19 MDT
+                assert.deepEqual(zkPkiCert.issueDate, issueDate);
             });
 
         it("Expiration Date Property",
             async function () {
-                assert.ok(false); // TODO:
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                const expirationDate = new Date(2026, 4, 23, 13, 17, 19, 0); // May 23, 2026 -- 13:17:19 MDT
+                assert.deepEqual(zkPkiCert.expirationDate, expirationDate);
             });
     });
