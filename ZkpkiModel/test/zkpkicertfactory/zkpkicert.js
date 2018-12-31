@@ -93,17 +93,26 @@ rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
 
         it("Serial Number Property",
             async function () {
-                assert.ok(false); // TODO:
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.deepEqual(zkPkiCert.serialNumber, "7c000000028f702488e6979673000000000002");
             });
 
         it("Subject Property",
             async function () {
-                assert.ok(false); // TODO:
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.deepEqual(zkPkiCert.subject, "CN=IssuingCA-CA1,O=DAN,C=US");
             });
 
         it("Issuer Property",
             async function () {
-                assert.ok(false); // TODO:
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.deepEqual(zkPkiCert.issuer, "CN=DAN Root CA,O=DAN,C=US");
             });
 
         it("Issue Date Property",

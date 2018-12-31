@@ -164,7 +164,7 @@ exports.beautifyDnString = (dnString) => {
 
 exports.dnStringToDnTypesAndValues = (dnString) => {
     const dnTypesAndValues = [];
-    dnString.split(",").forEach(function(dnPart) {
+    dnString.split(",").reverse().forEach(function(dnPart) {
         const [attr, value] = dnPart.split("=");
         if (!attr || !value)
             throw new Error(`distinguishedName ${dnPart} did not parse`);
@@ -181,7 +181,7 @@ exports.dnStringToDnTypesAndValues = (dnString) => {
 
 exports.dnTypesAndValuesToDnString = (dnTypesAndValues) => {
     let dnString = "";
-    dnTypesAndValues.forEach(function (dnAttrAndValue) {
+    dnTypesAndValues.reverse().forEach(function (dnAttrAndValue) {
         let dnAttr = getDnAttributeForOid(dnAttrAndValue.type);
         let dnValue = dnAttrAndValue.value.valueBlock.value;
         dnString = dnString.concat(`${dnAttr}=${dnValue},`);
