@@ -2,6 +2,7 @@
 
 const pkijs = require("pkijs");
 const asn1js = require("asn1js");
+const constants = require("./constants.js");
 
 function getOidForDnAttribute(attr) {
     switch (attr.toUpperCase()) {
@@ -195,6 +196,21 @@ exports.getCertificateDateRange = (numDays) => {
     const expire = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     expire.setDate(expire.getDate() + numDays);
     return [today, expire];
+}
+
+exports.algorithmOidToAlgorithmName = (algorithmOid) => {
+    if (!algorithmOid)
+        throw new Error("Algorithm OID is required to find algorithm name");
+    switch (algorithmOid) {
+        case "1.2.840.113549.1.1.1":
+            return constants.ALGORITHMS.RsaSsaPkcs1V1_5;
+        case "1.2.840.113549.1.1.10":
+            return constants.ALGORITHMS.RsaPss;
+        case "??":
+            return constants.ALGORITHMS.Ecdsa;
+        default:
+            throw new Error(`Unknown algorithm OID ${algorithmOid}`);
+    }
 }
 
 exports.berToPem = (label, berArray) => {

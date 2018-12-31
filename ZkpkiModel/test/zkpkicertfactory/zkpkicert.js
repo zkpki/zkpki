@@ -41,7 +41,7 @@ H/AHlVcFh/kilRCE9NLSo98PtCeuaWiaP2BMaFriB2LTENVQEiBvKZsUOudX1ntK
 A/oKPpyHaqT3J2nsBEnivI/VFMwLs3qKiOwdCiha++Ztheu1D5T3lzXkgiqFZbsU
 4boZorVl01/o0m+flu8JwpFBUTkbzNRHMlpMx3qCNEUZWkp9Pvr8HW96E5GZQEyQ
 rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
------END CERTIFICATE-----`
+-----END CERTIFICATE-----`;
 
         it("Constructor -- Null",
             async function () {
@@ -132,5 +132,21 @@ rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
                 const zkPkiCert = new ZkPkiCert({ certificate: raw });
                 const expirationDate = new Date(2026, 4, 23, 13, 17, 19, 0); // May 23, 2026 -- 13:17:19 MDT
                 assert.deepEqual(zkPkiCert.expirationDate, expirationDate);
+            });
+
+        it("Public Key Algorithm Property",
+            async function() {
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.deepEqual(zkPkiCert.publicKeyAlgorithm, certUtil.ALGORITHMS.RsaSsaPkcs1V1_5);
+            });
+
+        it("Public Key Size Property",
+            async function () {
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.deepEqual(zkPkiCert.publicKeySize, 4096);
             });
     });
