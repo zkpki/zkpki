@@ -112,10 +112,17 @@ function getSubjectAlternativeNamesExtension(subjectAlternativeNames) {
 }
 
 
-exports.generateKeyPair = async (algorithmName, keySize) => {
+exports.generateRsaKeyPair = async (algorithmName, keySize) => {
     const algorithm = pkijs.getAlgorithmParameters(algorithmName, "generatekey");
     if (keySize)
         algorithm.algorithm.modulusLength = keySize;
+    return await pkijs.getCrypto().generateKey(algorithm.algorithm, true, algorithm.usages);
+}
+
+exports.generateEcdsaKeyPair = async (curveName) => {
+    const algorithm = pkijs.getAlgorithmParameters(certUtil.ALGORITHMS.Ecdsa, "generatekey");
+    if (curveName)
+        algorithm.algorithm.namedCurve = curveName;
     return await pkijs.getCrypto().generateKey(algorithm.algorithm, true, algorithm.usages);
 }
 

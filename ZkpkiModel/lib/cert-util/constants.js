@@ -26,5 +26,10 @@ module.exports = Object.freeze({
         RsaSsaPkcs1V1_5: "RSASSA-PKCS1-v1_5",
         RsaPss: "RSA-PSS",
         Ecdsa: "ECDSA"
+    },
+    ELLIPTIC_CURVE_NAMES: {
+        NistP256: "P-256",
+        NistP384: "P-384",
+        NistP521: "P-521"
     }
 });

@@ -206,10 +206,25 @@ exports.algorithmOidToAlgorithmName = (algorithmOid) => {
             return constants.ALGORITHMS.RsaSsaPkcs1V1_5;
         case "1.2.840.113549.1.1.10":
             return constants.ALGORITHMS.RsaPss;
-        case "??":
+        case "1.2.840.10045.2.1":
             return constants.ALGORITHMS.Ecdsa;
         default:
             throw new Error(`Unknown algorithm OID ${algorithmOid}`);
+    }
+}
+
+exports.curveOidToCurveName = (curveOid) => {
+    if (!curveOid)
+        throw new Error("Elliptic curve OID is required to find elliptic curve name");
+    switch (curveOid) {
+        case "1.2.840.10045.3.1.7":
+            return constants.ELLIPTIC_CURVE_NAMES.NistP256;
+        case "1.3.132.0.34":
+            return constants.ELLIPTIC_CURVE_NAMES.NistP384;
+        case "1.3.132.0.35":
+            return constants.ELLIPTIC_CURVE_NAMES.NistP521;
+        default:
+            throw new Error(`Unknown elliptic curve OID ${curveOid}`);
     }
 }
 

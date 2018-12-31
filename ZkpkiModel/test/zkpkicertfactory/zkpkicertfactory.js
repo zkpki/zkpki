@@ -38,7 +38,7 @@ describe("ZKIPKI Certificate Factory",
         it("Create Certificate",
             async function () {
                 const rawCert = require("../../lib/zkpkicertfactory/rawcert.js");
-                const keyPair = await rawCert.generateKeyPair(certUtil.ALGORITHMS.RsaPss, 4096);
+                const keyPair = await rawCert.generateRsaKeyPair(certUtil.ALGORITHMS.RsaPss, 4096);
                 var serialNumber = 123;
                 const zkpkiCert = await zkpkiCertFactory.createCertificate(keyPair,
                     keyPair.publicKey,

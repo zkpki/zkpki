@@ -52,9 +52,21 @@ let ZkPkiCertFactory = function () {
     }
 
     // create zkpki root certificate authority
-    this.createCertificateAuthority = async (distinguishedName, lifetimeDays, algorithm, keySize) => {
-        const keyPair =
-            await rawCert.generateKeyPair(algorithm || certUtil.ALGORITHMS.RsaSsaPkcs1V1_5, keySize || 2048);
+    this.createCertificateAuthority = async (distinguishedName, lifetimeDays, algorithm, keySizeOrCurveName) => {
+        let keyPair = null;
+        switch (algorithm) {
+            case certUtil.ALGORITHMS.RsaSsaPkcs1V1_5:
+            case certUtil.ALGORITHMS.RsaPss:
+                keyPair = await rawCert.generateRsaKeyPair(algorithm || certUtil.ALGORITHMS.RsaSsaPkcs1V1_5,
+                        keySizeOrCurveName || 2048);
+                break;
+            case certUtil.ALGORITHMS.Ecdsa:
+                keyPair = await rawCert.generateEcdsaKeyPair(
+                    keySizeOrCurveName || certUtil.ELLIPTIC_CURVE_NAMES.NistP256);
+                break;
+            default:
+                throw new Error(`Unknown algorithm name: ${algorithm}`);
+        }
         const zkpkiCert = await this.createCertificate(keyPair,
             keyPair.publicKey,
             {

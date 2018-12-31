@@ -91,11 +91,29 @@ Object.defineProperty(zkPkiCert.prototype,
             switch (this.publicKeyAlgorithm) {
                 case certUtil.ALGORITHMS.RsaSsaPkcs1V1_5:
                 case certUtil.ALGORITHMS.RsaPss:
-                    return this.certificate.subjectPublicKeyInfo.parsedKey.modulus.valueBlock.valueHex.byteLength * 8;
+                    return this.certificate.subjectPublicKeyInfo
+                        .parsedKey.modulus.valueBlock.valueHex.byteLength * 8;
                 case certUtil.ALGORITHMS.Ecdsa:
                     return 0;
                 default:
                     return 0;
+            }
+        }
+    });
+Object.defineProperty(zkPkiCert.prototype,
+    "ellipticCurveName",
+    {
+        get: function ellipticCurveName() {
+            this.checkContainsRaw();
+            switch (this.publicKeyAlgorithm) {
+                case certUtil.ALGORITHMS.RsaSsaPkcs1V1_5:
+                case certUtil.ALGORITHMS.RsaPss:
+                    return "";
+                case certUtil.ALGORITHMS.Ecdsa:
+                    return certUtil.conversions.curveOidToCurveName(
+                        this.certificate.subjectPublicKeyInfo.parsedKey.namedCurve);
+                default:
+                    return "";
             }
         }
     });
