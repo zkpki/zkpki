@@ -159,5 +159,8 @@ exports.createRawCertificate = async (issuerKeyPair, subjectPublicKey, options =
 
 exports.parseRawCertificate = (certificateBuffer) => {
     const asn1 = asn1js.fromBER(certificateBuffer);
+    if (asn1.result.error) {
+        throw new Error(`Unable to parse raw certificate: ${asn1.result.error}`);
+    }
     return new pkijs.Certificate({ schema: asn1.result });
 }

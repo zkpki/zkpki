@@ -200,8 +200,8 @@ exports.getCertificateDateRange = (numDays) => {
 exports.berToPem = (label, berArray) => {
     if (!label || !berArray)
         throw new Error("Both the label and the BER array are required to generate PEM.");
-    const octetString = String.fromCharCode.apply(null, new Uint8Array(berArray));
-    const b64String = btoa(octetString);
+    const buff = Buffer.from(berArray, "binary");
+    const b64String = buff.toString("base64");
     const stringLength = b64String.length;
     let resultString = `-----BEGIN ${label.toUpperCase()}-----\r\n`;
     for (let i = 0, count = 0; i < stringLength; i++ , count++) {
@@ -217,5 +217,6 @@ exports.berToPem = (label, berArray) => {
 exports.pemToBer = (pemData) => {
     const pemDataNoLabel = pemData.replace(/-----.*?-----/g, "");
     const b64String = pemDataNoLabel.replace(/\r|\n/g, "");
-    return atob(b64String);
+    const buff = Buffer.from(b64String, "base64");
+    return new Uint8Array([...buff]).buffer;
 }
