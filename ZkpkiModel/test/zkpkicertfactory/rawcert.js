@@ -1,10 +1,12 @@
 const assert = require("assert").strict;
+const certUtil = require("../../lib/cert-util");
 const rawCert = require("../../lib/zkpkicertfactory/rawcert.js");
 
 describe("Raw Certificate Functions",
     function() {
         it("Generate Key Pair",
-            async function() {
+            async function () {
+                
                 assert.ok(false); // TODO:
             });
 

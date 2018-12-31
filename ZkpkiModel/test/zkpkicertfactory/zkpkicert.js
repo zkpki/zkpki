@@ -5,6 +5,7 @@ const certUtil = require("../../lib/cert-util");
 
 describe("ZKPKI Certificate Object",
     function () {
+        // PEM file generated from Microsoft Certificate Services CA
         const certPemString = `-----BEGIN CERTIFICATE-----
 MIIGTjCCBDagAwIBAgITfAAAAAKPcCSI5peWcwAAAAAAAjANBgkqhkiG9w0BAQsF
 ADAxMQswCQYDVQQGEwJVUzEMMAoGA1UEChMDREFOMRQwEgYDVQQDEwtEQU4gUm9v
@@ -40,7 +41,7 @@ H/AHlVcFh/kilRCE9NLSo98PtCeuaWiaP2BMaFriB2LTENVQEiBvKZsUOudX1ntK
 A/oKPpyHaqT3J2nsBEnivI/VFMwLs3qKiOwdCiha++Ztheu1D5T3lzXkgiqFZbsU
 4boZorVl01/o0m+flu8JwpFBUTkbzNRHMlpMx3qCNEUZWkp9Pvr8HW96E5GZQEyQ
 rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
------END CERTIFICATE-----`
+-----END CERTIFICATE-----`;
 
         it("Constructor -- Null",
             async function () {
@@ -93,26 +94,59 @@ rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
 
         it("Serial Number Property",
             async function () {
-                assert.ok(false); // TODO:
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.deepEqual(zkPkiCert.serialNumber, "7c000000028f702488e6979673000000000002");
             });
 
         it("Subject Property",
             async function () {
-                assert.ok(false); // TODO:
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.deepEqual(zkPkiCert.subject, "CN=IssuingCA-CA1,O=DAN,C=US");
             });
 
         it("Issuer Property",
             async function () {
-                assert.ok(false); // TODO:
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.deepEqual(zkPkiCert.issuer, "CN=DAN Root CA,O=DAN,C=US");
             });
 
         it("Issue Date Property",
             async function () {
-                assert.ok(false); // TODO:
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                const issueDate = new Date(2016, 4, 23, 13, 7, 19, 0); // May 23, 2016 -- 13:07:19 MDT
+                assert.deepEqual(zkPkiCert.issueDate, issueDate);
             });
 
         it("Expiration Date Property",
             async function () {
-                assert.ok(false); // TODO:
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                const expirationDate = new Date(2026, 4, 23, 13, 17, 19, 0); // May 23, 2026 -- 13:17:19 MDT
+                assert.deepEqual(zkPkiCert.expirationDate, expirationDate);
+            });
+
+        it("Public Key Algorithm Property",
+            async function() {
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.deepEqual(zkPkiCert.publicKeyAlgorithm, certUtil.ALGORITHMS.RsaSsaPkcs1V1_5);
+            });
+
+        it("Public Key Size Property",
+            async function () {
+                const data = certUtil.conversions.pemToBer(certPemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.deepEqual(zkPkiCert.publicKeySize, 4096);
             });
     });

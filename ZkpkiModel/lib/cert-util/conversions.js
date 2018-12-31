@@ -2,6 +2,7 @@
 
 const pkijs = require("pkijs");
 const asn1js = require("asn1js");
+const constants = require("./constants.js");
 
 function getOidForDnAttribute(attr) {
     switch (attr.toUpperCase()) {
@@ -164,7 +165,7 @@ exports.beautifyDnString = (dnString) => {
 
 exports.dnStringToDnTypesAndValues = (dnString) => {
     const dnTypesAndValues = [];
-    dnString.split(",").forEach(function(dnPart) {
+    dnString.split(",").reverse().forEach(function(dnPart) {
         const [attr, value] = dnPart.split("=");
         if (!attr || !value)
             throw new Error(`distinguishedName ${dnPart} did not parse`);
@@ -181,7 +182,7 @@ exports.dnStringToDnTypesAndValues = (dnString) => {
 
 exports.dnTypesAndValuesToDnString = (dnTypesAndValues) => {
     let dnString = "";
-    dnTypesAndValues.forEach(function (dnAttrAndValue) {
+    dnTypesAndValues.reverse().forEach(function (dnAttrAndValue) {
         let dnAttr = getDnAttributeForOid(dnAttrAndValue.type);
         let dnValue = dnAttrAndValue.value.valueBlock.value;
         dnString = dnString.concat(`${dnAttr}=${dnValue},`);
@@ -195,6 +196,36 @@ exports.getCertificateDateRange = (numDays) => {
     const expire = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     expire.setDate(expire.getDate() + numDays);
     return [today, expire];
+}
+
+exports.algorithmOidToAlgorithmName = (algorithmOid) => {
+    if (!algorithmOid)
+        throw new Error("Algorithm OID is required to find algorithm name");
+    switch (algorithmOid) {
+        case "1.2.840.113549.1.1.1":
+            return constants.ALGORITHMS.RsaSsaPkcs1V1_5;
+        case "1.2.840.113549.1.1.10":
+            return constants.ALGORITHMS.RsaPss;
+        case "1.2.840.10045.2.1":
+            return constants.ALGORITHMS.Ecdsa;
+        default:
+            throw new Error(`Unknown algorithm OID ${algorithmOid}`);
+    }
+}
+
+exports.curveOidToCurveName = (curveOid) => {
+    if (!curveOid)
+        throw new Error("Elliptic curve OID is required to find elliptic curve name");
+    switch (curveOid) {
+        case "1.2.840.10045.3.1.7":
+            return constants.ELLIPTIC_CURVE_NAMES.NistP256;
+        case "1.3.132.0.34":
+            return constants.ELLIPTIC_CURVE_NAMES.NistP384;
+        case "1.3.132.0.35":
+            return constants.ELLIPTIC_CURVE_NAMES.NistP521;
+        default:
+            throw new Error(`Unknown elliptic curve OID ${curveOid}`);
+    }
 }
 
 exports.berToPem = (label, berArray) => {

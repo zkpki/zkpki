@@ -20,7 +20,8 @@ describe("ZKIPKI Certificate Factory",
                     365 * 5,
                     certUtil.ALGORITHMS.RsaSsaPkcs1V1_5,
                     2048);
-                assert.ok(zkpkiCert.serialNumber === 100000, "Root CA certificate serial number");
+                serialNumber = 100000;
+                assert.ok(zkpkiCert.serialNumber === serialNumber.toString(16), "Root CA certificate serial number");
                 assert.ok(zkpkiCert.subject === "CN=dan peterson,O=company,C=US", "Beautified subject distinguished name");
                 const now = new Date();
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -37,11 +38,12 @@ describe("ZKIPKI Certificate Factory",
         it("Create Certificate",
             async function () {
                 const rawCert = require("../../lib/zkpkicertfactory/rawcert.js");
-                const keyPair = await rawCert.generateKeyPair(certUtil.ALGORITHMS.RsaPss, 4096);
+                const keyPair = await rawCert.generateRsaKeyPair(certUtil.ALGORITHMS.RsaPss, 4096);
+                var serialNumber = 123;
                 const zkpkiCert = await zkpkiCertFactory.createCertificate(keyPair,
                     keyPair.publicKey,
                     {
-                        serialNumber: 123,
+                        serialNumber: serialNumber,
                         issuerDn: "cn=foo",
                         subjectDn: "cn=foo",
                         lifetimeDays: 365 * 10,
@@ -59,7 +61,7 @@ describe("ZKIPKI Certificate Factory",
                             certUtil.EXTENDED_KEY_USAGES.ClientAuthentication
                         ]
                     });
-                assert.ok(zkpkiCert.serialNumber === 123, "Self-signed certificate serial number");
+                assert.ok(zkpkiCert.serialNumber === serialNumber.toString(16), "Self-signed certificate serial number");
                 assert.ok(zkpkiCert.subject === "CN=foo", "Beautified subject distinguished name");
                 const now = new Date();
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());

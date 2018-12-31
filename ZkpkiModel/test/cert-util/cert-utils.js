@@ -30,6 +30,11 @@ describe("Cert Util Conversions",
                 assert.ok(false); // TODO:
             });
 
+        it("Algorithm OID To Algorithm Name",
+            async function() {
+                assert.ok(false); // TODO:
+            });
+
         const pemString = `-----BEGIN CERTIFICATE-----\r
 MIIFzjCCA7agAwIBAgIQGmNsYGWYXolD3k9OLLVnYjANBgkqhkiG9w0BAQsFADAx\r
 MQswCQYDVQQGEwJVUzEMMAoGA1UEChMDREFOMRQwEgYDVQQDEwtEQU4gUm9vdCBD\r
