@@ -158,7 +158,7 @@ exports.beautifyDnString = (dnString) => {
         const [attr, value] = dnPart.split("=");
         if (!attr || !value)
             throw new Error(`distinguishedName ${dnPart} did not parse`);
-        prettyDn = prettyDn.concat(`${attr.toUpperCase()}=${value},`);
+        prettyDn = prettyDn.concat(`${attr.toUpperCase().trim()}=${value.trim()},`);
     });
     return prettyDn.slice(0, -1);
 }

@@ -4,7 +4,7 @@ const certUtil = require("../../lib/cert-util");
 describe("Cert Util Conversions",
     function() {
         it("Beautify DN String",
-            async function() {
+            async function beautifyDnString() {
                 assert.deepEqual(certUtil.conversions.beautifyDnString("cn=foo"), "CN=foo", "Single DN Part");
                 assert.deepEqual(certUtil.conversions.beautifyDnString("Cn=foo"), "CN=foo", "Camel DN Type");
                 assert.deepEqual(certUtil.conversions.beautifyDnString("cn=Capitalized Name"),
@@ -13,6 +13,9 @@ describe("Cert Util Conversions",
                 assert.deepEqual(certUtil.conversions.beautifyDnString("cn=dan,o=zkpki,c=US"),
                     "CN=dan,O=zkpki,C=US",
                     "Multipart DN");
+                assert.deepEqual(certUtil.conversions.beautifyDnString("cn=dan ,o= zkpki, c =US"),
+                    "CN=dan,O=zkpki,C=US",
+                    "Multipart DN with leading and trailing spaces");
             });
 
         it("DN String to DN Data Types and Values",
