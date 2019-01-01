@@ -52,8 +52,15 @@ describe("Cert Util Conversions",
             });
 
         it("DN Types and Values to DN String",
-            async function() {
-                assert.ok(false); // TODO:
+            async function dnTypesAndValuesToDnString() {
+                const testDn = "C=value,O=value,OU=value,DNQUALIFIER=value,ST=value,S=value,CN=value,SERIALNUMBER=value,L=value,TITLE=value,T=value,SN=value,G=value,I=value,2.5.4.65=value,2.5.4.44=value,DC=value,E=value,UID=value,UNSTRUCTUREDNAME=value";
+                dnTypesAndValues = certUtil.conversions.dnStringToDnTypesAndValues(testDn);
+                const convertedDn = certUtil.conversions.dnTypesAndValuesToDnString(dnTypesAndValues);
+                assert.deepEqual(convertedDn, "C=value,O=value,OU=value,DNQUALIFIER=value,S=value,S=value,CN=value,SERIALNUMBER=value,L=value,T=value,T=value,SN=value,G=value,I=value,2.5.4.65=value,2.5.4.44=value,DC=value,E=value,UID=value,UNSTRUCTUREDNAME=value");
+
+                // Test that we catch bad OIDs
+                dnTypesAndValues[0].type = "1.2.3.4";
+                assert.throws(() => certUtil.conversions.dnTypesAndValuesToDnString(dnTypesAndValues), Error);
             });
 
         it("Get Certificate Date Range",
