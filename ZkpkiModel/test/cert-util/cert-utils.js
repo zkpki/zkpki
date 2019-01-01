@@ -73,8 +73,11 @@ describe("Cert Util Conversions",
             });
 
         it("Algorithm OID To Algorithm Name",
-            async function() {
-                assert.ok(false); // TODO:
+            async function algorithmOidToAlgorithmName() {
+                assert.deepEqual(certUtil.conversions.algorithmOidToAlgorithmName("1.2.840.113549.1.1.1"), "RSASSA-PKCS1-v1_5");
+                assert.deepEqual(certUtil.conversions.algorithmOidToAlgorithmName("1.2.840.113549.1.1.10"), "RSA-PSS");
+                assert.deepEqual(certUtil.conversions.algorithmOidToAlgorithmName("1.2.840.10045.2.1"), "ECDSA");
+                assert.throws(() => certUtil.conversions.algorithmOidToAlgorithmName("1.2.3.4"), Error);        
             });
 
         const pemString = `-----BEGIN CERTIFICATE-----\r
