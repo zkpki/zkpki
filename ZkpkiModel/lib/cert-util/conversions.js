@@ -153,8 +153,8 @@ function getDnAttributeForOid(oid) {
 }
 
 exports.beautifyDnString = (dnString) => {
-    let prettyDn = "";
-    dnString.split(",").forEach(function(dnPart) {
+    let prettyDn = "";    
+    dnString.match(/(?:\\,|[^,])+/g).forEach(function (dnPart) {
         const [attr, value] = dnPart.split("=");
         if (!attr || !value)
             throw new Error(`distinguishedName ${dnPart} did not parse`);

@@ -16,6 +16,9 @@ describe("Cert Util Conversions",
                 assert.deepEqual(certUtil.conversions.beautifyDnString("cn=dan ,o= zkpki, c =US"),
                     "CN=dan,O=zkpki,C=US",
                     "Multipart DN with leading and trailing spaces");
+                assert.deepEqual(certUtil.conversions.beautifyDnString("cn=peterson\\,dan,o=zkpki,c=US"),
+                    "CN=peterson\\,dan,O=zkpki,C=US",
+                    "Multipart DN with escaped comma");
             });
 
         it("DN String to DN Data Types and Values",
