@@ -17,7 +17,7 @@ function getOidForDnAttribute(attr) {
         case "OU":
             return "2.5.4.11";
         // * distinguished name qualifier,
-        case "dnQualifier":
+        case "DNQUALIFIER":
             return "2.5.4.46";
         // * state or province name,
         case "ST":
@@ -93,7 +93,7 @@ function getDnAttributeForOid(oid) {
             return "OU";
         // * distinguished name qualifier,
         case "2.5.4.46":
-            return "dnQualifer";
+            return "DNQUALIFIER";
         // * state or province name,
         case "2.5.4.8":
             return "S";

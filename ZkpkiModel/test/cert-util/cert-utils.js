@@ -22,8 +22,33 @@ describe("Cert Util Conversions",
             });
 
         it("DN String to DN Data Types and Values",
-            async function() {
-                assert.ok(false); // TODO:
+            async function dnStringToDnTypesAndValues() {
+                const testDn = "C=value,O=value,OU=value,DNQUALIFIER=value,ST=value,S=value,CN=value,SERIALNUMBER=value,L=value,TITLE=value,T=value,SN=value,G=value,I=value,2.5.4.65=value,2.5.4.44=value,DC=value,E=value,UID=value,UNSTRUCTUREDNAME=value";
+                dnTypesAndValues = certUtil.conversions.dnStringToDnTypesAndValues(testDn);
+                assert.equal(dnTypesAndValues.length, 20);
+                assert.deepEqual(dnTypesAndValues[0].type, "1.2.840.113549.1.9.2");
+                assert.deepEqual(dnTypesAndValues[1].type, "0.9.2342.19200300.100.1.1");
+                assert.deepEqual(dnTypesAndValues[2].type, "1.2.840.113549.1.9.1");
+                assert.deepEqual(dnTypesAndValues[3].type, "0.9.2342.19200300.100.1.25");
+                assert.deepEqual(dnTypesAndValues[4].type, "2.5.4.44");
+                assert.deepEqual(dnTypesAndValues[5].type, "2.5.4.65");
+                assert.deepEqual(dnTypesAndValues[6].type, "2.5.4.43");
+                assert.deepEqual(dnTypesAndValues[7].type, "2.5.4.42");
+                assert.deepEqual(dnTypesAndValues[8].type, "2.5.4.4");
+                assert.deepEqual(dnTypesAndValues[9].type, "2.5.4.12");
+                assert.deepEqual(dnTypesAndValues[10].type, "2.5.4.12");
+                assert.deepEqual(dnTypesAndValues[11].type, "2.5.4.7",);
+                assert.deepEqual(dnTypesAndValues[12].type, "2.5.4.5");
+                assert.deepEqual(dnTypesAndValues[13].type, "2.5.4.3");
+                assert.deepEqual(dnTypesAndValues[14].type, "2.5.4.8");
+                assert.deepEqual(dnTypesAndValues[15].type, "2.5.4.8");
+                assert.deepEqual(dnTypesAndValues[16].type, "2.5.4.46");
+                assert.deepEqual(dnTypesAndValues[17].type, "2.5.4.11");
+                assert.deepEqual(dnTypesAndValues[18].type, "2.5.4.10");
+                assert.deepEqual(dnTypesAndValues[19].type, "2.5.4.6");
+
+                const badDn = "FIRSTNAME=matt,LASTNAME=peterson";
+                assert.throws(() => certUtil.conversions.dnStringToDnTypesAndValues(badDn), Error);
             });
 
         it("DN Types and Values to DN String",
