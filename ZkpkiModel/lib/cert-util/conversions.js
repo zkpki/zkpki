@@ -193,7 +193,7 @@ exports.dnTypesAndValuesToDnString = (dnTypesAndValues) => {
 exports.getCertificateDateRange = (numDays) => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const expire = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const expire = new Date(today.valueOf());    
     expire.setDate(expire.getDate() + numDays);
     return [today, expire];
 }

@@ -64,8 +64,12 @@ describe("Cert Util Conversions",
             });
 
         it("Get Certificate Date Range",
-            async function() {
-                assert.ok(false); // TODO:
+            async function getCertificateDateRange() {
+                var dateRange = certUtil.conversions.getCertificateDateRange(1);
+                assert.equal(dateRange.length, 2);
+                var today = dateRange[0].valueOf();
+                var expires = dateRange[1].valueOf();
+                assert.equal(expires - today, 86400000);
             });
 
         it("Algorithm OID To Algorithm Name",
