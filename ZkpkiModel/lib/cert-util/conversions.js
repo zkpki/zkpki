@@ -165,7 +165,7 @@ exports.beautifyDnString = (dnString) => {
 
 exports.dnStringToDnTypesAndValues = (dnString) => {
     const dnTypesAndValues = [];
-    dnString.split(",").reverse().forEach(function(dnPart) {
+    dnString.match(/(?:\\,|[^,])+/g).reverse().forEach(function(dnPart) {
         const [attr, value] = dnPart.split("=");
         if (!attr || !value)
             throw new Error(`distinguishedName ${dnPart} did not parse`);
