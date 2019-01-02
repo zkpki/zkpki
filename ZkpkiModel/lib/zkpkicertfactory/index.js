@@ -36,8 +36,8 @@ let ZkPkiCertFactory = function () {
     const startingSerialNumber = 100000;
 
     // load zkpki certificate from PEM data or raw pkijs
-    this.loadCertificate = async (parameters = {}) => {
-        let zkpkiCert = new ZkPkiCert(parameters);
+    this.loadCertificate = async (data = {}) => {
+        let zkpkiCert = new ZkPkiCert(data);
         // because generating PEM data from raw pkijs requires async function
         // we have to put this logic here rather than in the ZkPkiCert constructor
         if (zkpkiCert.certificatePemData === null && zkpkiCert.certificate === null) {
@@ -46,7 +46,7 @@ let ZkPkiCertFactory = function () {
             zkpkiCert.certificatePemData = certUtil.conversions.berToPem("CERTIFICATE",
                 await zkpkiCert.certificate.toSchema(true).toBER(false));
         } else if (zkpkiCert.certificatePemData !== null && zkpkiCert.certificate === null) {
-            zkpkiCert.certificate = rawCert.parseRawCertificate(certUtil.pemToBer(zkpkiCert.certificatePemData));
+            zkpkiCert.certificate = rawCert.parseRawCertificate(certUtil.conversions.pemToBer(zkpkiCert.certificatePemData));
         }
         return zkpkiCert;
     }
