@@ -79,8 +79,13 @@ Object.defineProperty(zkPkiCert.prototype,
     {
         get: function publicKeyAlgorithm() {
             this.checkContainsRaw();
-            return certUtil.conversions.algorithmOidToAlgorithmName(
+            const algorithmName = certUtil.conversions.algorithmOidToAlgorithmName(
                 this.certificate.subjectPublicKeyInfo.algorithm.algorithmId);
+            if (algorithmName === certUtil.ALGORITHMS.RsaSsaPkcs1V1_5)
+                // get the specific RSA signature algorithm used to sign this certificate
+                return certUtil.conversions.algorithmOidToAlgorithmName(
+                    this.certificate.signatureAlgorithm.algorithmId);
+            return algorithmName;
         }
     });
 Object.defineProperty(zkPkiCert.prototype,

@@ -202,7 +202,8 @@ exports.algorithmOidToAlgorithmName = (algorithmOid) => {
     if (!algorithmOid)
         throw new Error("Algorithm OID is required to find algorithm name");
     switch (algorithmOid) {
-        case "1.2.840.113549.1.1.1":
+        case "1.2.840.113549.1.1.1":  // RSA encryption for PKCS#1
+        case "1.2.840.113549.1.1.11": // RSA encryption with SHA256 and PKCS#1
             return constants.ALGORITHMS.RsaSsaPkcs1V1_5;
         case "1.2.840.113549.1.1.10":
             return constants.ALGORITHMS.RsaPss;
