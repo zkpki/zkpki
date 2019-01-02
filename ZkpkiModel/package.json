@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "ip-address": "^5.8.9",
-    "node-webcrypto-ossl": "^1.0.38",
+    "node-webcrypto-ossl": "^1.0.39",
     "pkijs": "^2.1.72"
   },
   "devDependencies": {

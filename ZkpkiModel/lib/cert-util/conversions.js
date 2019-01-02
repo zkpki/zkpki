@@ -17,7 +17,7 @@ function getOidForDnAttribute(attr) {
         case "OU":
             return "2.5.4.11";
         // * distinguished name qualifier,
-        case "dnQualifier":
+        case "DNQUALIFIER":
             return "2.5.4.46";
         // * state or province name,
         case "ST":
@@ -93,7 +93,7 @@ function getDnAttributeForOid(oid) {
             return "OU";
         // * distinguished name qualifier,
         case "2.5.4.46":
-            return "dnQualifer";
+            return "DNQUALIFIER";
         // * state or province name,
         case "2.5.4.8":
             return "S";
@@ -153,19 +153,19 @@ function getDnAttributeForOid(oid) {
 }
 
 exports.beautifyDnString = (dnString) => {
-    let prettyDn = "";
-    dnString.split(",").forEach(function(dnPart) {
+    let prettyDn = "";    
+    dnString.match(/(?:\\,|[^,])+/g).forEach(function (dnPart) {
         const [attr, value] = dnPart.split("=");
         if (!attr || !value)
             throw new Error(`distinguishedName ${dnPart} did not parse`);
-        prettyDn = prettyDn.concat(`${attr.toUpperCase()}=${value},`);
+        prettyDn = prettyDn.concat(`${attr.toUpperCase().trim()}=${value.trim()},`);
     });
     return prettyDn.slice(0, -1);
 }
 
 exports.dnStringToDnTypesAndValues = (dnString) => {
     const dnTypesAndValues = [];
-    dnString.split(",").reverse().forEach(function(dnPart) {
+    dnString.match(/(?:\\,|[^,])+/g).reverse().forEach(function(dnPart) {
         const [attr, value] = dnPart.split("=");
         if (!attr || !value)
             throw new Error(`distinguishedName ${dnPart} did not parse`);
@@ -193,7 +193,7 @@ exports.dnTypesAndValuesToDnString = (dnTypesAndValues) => {
 exports.getCertificateDateRange = (numDays) => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const expire = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const expire = new Date(today.valueOf());    
     expire.setDate(expire.getDate() + numDays);
     return [today, expire];
 }
