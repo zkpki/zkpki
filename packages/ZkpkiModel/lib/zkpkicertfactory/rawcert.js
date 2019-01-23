@@ -114,6 +114,7 @@ function getSubjectAlternativeNamesExtension(subjectAlternativeNames) {
 
 exports.generateRsaKeyPair = async (algorithmName, keySize) => {
     const algorithm = pkijs.getAlgorithmParameters(algorithmName, "generatekey");
+    algorithm.algorithm.hash.name = "SHA-256";
     if (keySize)
         algorithm.algorithm.modulusLength = keySize;
     return await pkijs.getCrypto().generateKey(algorithm.algorithm, true, algorithm.usages);
