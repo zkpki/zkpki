@@ -131,6 +131,18 @@ exports.exportPrivateKey = async (keyPair) => {
     return await pkijs.getCrypto().exportKey("pkcs8", keyPair.privateKey);
 }
 
+exports.importRsaPrivateKey = async (pkcs8Buffer, algorithmName) => {
+    const algorithm = pkijs.getAlgorithmParameters(algorithmName, "importkey");
+    algorithm.algorithm.hash.name = "SHA-256";
+    return await pkijs.getCrypto().importKey("pkcs8", pkcs8Buffer, algorithm.algorithm, true, ["sign"]);
+}
+
+exports.importEcdsaPrivateKey = async (pkcs8Buffer, curveName) => {
+    const algorithm = pkijs.getAlgorithmParameters(certUtil.ALGORITHMS.Ecdsa, "importkey");
+    algorithm.algorithm.namedCurve = curveName;
+    return await pkijs.getCrypto().importKey("pkcs8", pkcs8Buffer, algorithm.algorithm, true, ["sign"]);
+}
+
 exports.createRawCertificate = async (issuerKeyPair, subjectPublicKey, options = {}) => {
     const rawCert = new pkijs.Certificate();
     rawCert.version = 2;
