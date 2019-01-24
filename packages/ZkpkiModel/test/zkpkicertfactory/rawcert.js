@@ -61,13 +61,9 @@ describe("Raw Certificate Functions",
                 assert.ok(ecdsaP521.privateKey.extractable);
             });
 
-        it("Create Raw Certificate",
+        it("Create / Parse Raw Certificate",
             async function () {
                 assert.ok(false); // TODO:
             });
 
-        it("Parse Raw Certificate",
-            async function () {
-                assert.ok(false); // TODO:
-            });
     });

@@ -1,6 +1,7 @@
 "use strict";
 
 const certUtil = require("../cert-util");
+const rawCert = require("./rawcert.js");
 
 let zkPkiCert = function (parameters = {}) {
     if (parameters.certificatePemData !== undefined) {
@@ -18,13 +19,18 @@ let zkPkiCert = function (parameters = {}) {
     } else {
         this.certificate = null;
     }
+    if (parameters.privateKey !== undefined) {
+        this.privateKey = parameters.privateKey;
+    } else {
+        this.privateKey = null;
+    }
 }
 
 Object.defineProperty(zkPkiCert.prototype,
-    "checkContainsRaw",
+    "checkContainsRawCertificate",
     {
         enumerable: false,
-        value: function checkContainsRaw() {
+        value: function checkContainsRawCertificate() {
             if (this.certificate === null) {
                 throw Error("ZkPkiCert does not contain raw certificate.");
             }
@@ -32,13 +38,45 @@ Object.defineProperty(zkPkiCert.prototype,
     });
 
 Object.defineProperty(zkPkiCert.prototype,
+    "checkContainsRawPrivateKey",
+    {
+        enumerable: false,
+        value: function checkContainsRawPrivateKey() {
+            if (this.privateKey === null) {
+                throw Error("ZkPkiCert does not contain raw private key.");
+            }
+        }
+    });
+
+
+Object.defineProperty(zkPkiCert.prototype,
+    "toPkcs12",
+    {
+        enumerable: false,
+        value: async function toPkcs12() {
+            this.checkContainsRawPrivateKey();
+            // TODO:
+        }
+    });
+
+Object.defineProperty(zkPkiCert.prototype,
+    "getCryptoPrivateKey",
+    {
+        enumerable: false,
+        value: async function getCryptoPrivateKey() {
+            this.checkContainsRawPrivateKey();
+            return await rawCert.importRsaPrivateKey(this.privateKey.toSchema().toBER(), this.publicKeyAlgorithm);
+        }
+    });
+
+Object.defineProperty(zkPkiCert.prototype,
     "serialNumber",
     {
         get: function serialNumber() {
-            this.checkContainsRaw();
+            this.checkContainsRawCertificate();
             const b64String = Array.prototype.map.call(
                 new Uint8Array(this.certificate.serialNumber.valueBlock.valueHex),
-                x => ("00" + x.toString(16)).slice(-2)).join('');
+                x => (`00${x.toString(16)}`).slice(-2)).join("");
             return b64String.replace(/^0+/, ""); // remove leading zeros if present
         }
     });
@@ -46,7 +84,7 @@ Object.defineProperty(zkPkiCert.prototype,
     "subject",
     {
         get: function subject() {
-            this.checkContainsRaw();
+            this.checkContainsRawCertificate();
             return certUtil.conversions.dnTypesAndValuesToDnString(this.certificate.subject.typesAndValues);
         }
     });
@@ -54,7 +92,7 @@ Object.defineProperty(zkPkiCert.prototype,
     "issuer",
     {
         get: function issuer() {
-            this.checkContainsRaw();
+            this.checkContainsRawCertificate();
             return certUtil.conversions.dnTypesAndValuesToDnString(this.certificate.issuer.typesAndValues);
         }
     });
@@ -62,7 +100,7 @@ Object.defineProperty(zkPkiCert.prototype,
     "issueDate",
     {
         get: function issueDate() {
-            this.checkContainsRaw();
+            this.checkContainsRawCertificate();
             return this.certificate.notBefore.value;
         }
     });
@@ -70,7 +108,7 @@ Object.defineProperty(zkPkiCert.prototype,
     "expirationDate",
     {
         get: function expirationDate() {
-            this.checkContainsRaw();
+            this.checkContainsRawCertificate();
             return this.certificate.notAfter.value;
         }
     });
@@ -78,7 +116,7 @@ Object.defineProperty(zkPkiCert.prototype,
     "publicKeyAlgorithm",
     {
         get: function publicKeyAlgorithm() {
-            this.checkContainsRaw();
+            this.checkContainsRawCertificate();
             const algorithmName = certUtil.conversions.algorithmOidToAlgorithmName(
                 this.certificate.subjectPublicKeyInfo.algorithm.algorithmId);
             if (algorithmName === certUtil.ALGORITHMS.RsaSsaPkcs1V1_5)
@@ -92,7 +130,7 @@ Object.defineProperty(zkPkiCert.prototype,
     "publicKeySize",
     {
         get: function publicKeySize() {
-            this.checkContainsRaw();
+            this.checkContainsRawCertificate();
             switch (this.publicKeyAlgorithm) {
                 case certUtil.ALGORITHMS.RsaSsaPkcs1V1_5:
                 case certUtil.ALGORITHMS.RsaPss:
@@ -109,7 +147,7 @@ Object.defineProperty(zkPkiCert.prototype,
     "ellipticCurveName",
     {
         get: function ellipticCurveName() {
-            this.checkContainsRaw();
+            this.checkContainsRawCertificate();
             switch (this.publicKeyAlgorithm) {
                 case certUtil.ALGORITHMS.RsaSsaPkcs1V1_5:
                 case certUtil.ALGORITHMS.RsaPss:

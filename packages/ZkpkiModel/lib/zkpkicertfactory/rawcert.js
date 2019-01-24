@@ -184,3 +184,11 @@ exports.parseRawCertificate = (certificateBuffer) => {
     }
     return new pkijs.Certificate({ schema: asn1.result });
 }
+
+exports.parseRawPrivateKey = (privateKeyBuffer) => {
+    const asn1 = asn1js.fromBER(privateKeyBuffer);
+    if (asn1.result.error) {
+        throw new Error(`Unable to parse raw private key: ${asn1.result.error}`);
+    }
+    return new pkijs.PrivateKeyInfo({ schema: asn1.result });
+}
