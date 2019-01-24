@@ -63,7 +63,37 @@ describe("Raw Certificate Functions",
 
         it("Create / Parse Raw Certificate",
             async function () {
-                assert.ok(false); // TODO:
+                const rsaSsa4096 = await rawCert.generateRsaKeyPair(certUtil.ALGORITHMS.RsaSsaPkcs1V1_5, 4096);
+                const certificate = await rawCert.createRawCertificate(rsaSsa4096,
+                    rsaSsa4096.publicKey,
+                    {
+                        serialNumber: 3456,
+                        issuerDn: "CN=dan test,C=US",
+                        subjectDn: "CN=dan test,C=US",
+                        lifetimeDays: 100,
+                        keyUsages: certUtil.KEY_USAGES.KeySignCert | certUtil.KEY_USAGES.KeyAgreement | certUtil.KEY_USAGES.DigitalSignature,
+                        extendedKeyUsages: [
+                            certUtil.EXTENDED_KEY_USAGES.MsCertificateTrustListSigning,
+                            certUtil.EXTENDED_KEY_USAGES.ServerAuthentication,
+                            certUtil.EXTENDED_KEY_USAGES.ClientAuthentication
+                        ]
+                    });
+                const certificateData = certificate.toSchema(true).toBER(false);
+                const parsedCertificate = rawCert.parseRawCertificate(certificateData);
+                assert.deepEqual(certificate.serialNumber.valueBlock._valueDec, parsedCertificate.serialNumber.valueBlock._valueDec);
+                assert.deepEqual(certUtil.conversions.dnTypesAndValuesToDnString(certificate.issuer.typesAndValues),
+                    certUtil.conversions.dnTypesAndValuesToDnString(parsedCertificate.issuer.typesAndValues));
+                assert.deepEqual(certUtil.conversions.dnTypesAndValuesToDnString(certificate.subject.typesAndValues),
+                    certUtil.conversions.dnTypesAndValuesToDnString(parsedCertificate.subject.typesAndValues));
+
+                assert.deepEqual(certificate.notBefore.value, parsedCertificate.notBefore.value);
+                assert.deepEqual(certificate.notAfter.value, parsedCertificate.notAfter.value);
+
+                assert.deepEqual(certUtil.conversions.extendedKeyUsagesAsArrayOfStrings(certificate.extensions),
+                    certUtil.conversions.extendedKeyUsagesAsArrayOfStrings(parsedCertificate.extensions));
+
+                assert.deepEqual(certUtil.conversions.extendedKeyUsagesAsArrayOfStrings(certificate.extensions),
+                    certUtil.conversions.extendedKeyUsagesAsArrayOfStrings(parsedCertificate.extensions));
             });
 
     });

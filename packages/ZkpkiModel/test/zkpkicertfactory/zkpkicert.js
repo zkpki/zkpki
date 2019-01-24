@@ -221,6 +221,16 @@ z2yaUBhvyrus
                 assert.deepEqual(zkPkiCert.publicKeySize, 4096);
             });
 
+        it("Key Usages",
+            async function () {
+                assert.ok(false);
+            });
+
+        it("Extended Key Usages",
+            async function () {
+                assert.ok(false);
+            });
+
         it("Certificate and Private Key",
             async function() {
                 const certData = certUtil.conversions.pemToBer(cert2PemString);

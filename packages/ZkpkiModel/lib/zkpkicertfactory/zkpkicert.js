@@ -105,6 +105,24 @@ Object.defineProperty(zkPkiCert.prototype,
         }
     });
 Object.defineProperty(zkPkiCert.prototype,
+    "keyUsages",
+    {
+        get: function keyUsages() {
+            this.checkContainsRawCertificate();
+            return certUtil.conversions.extendedKeyUsagesAsArrayOfStrings(
+                this.extensions.filter(ext => ext.extnID === "2.5.29.15"));
+        }
+    });
+Object.defineProperty(zkPkiCert.prototype,
+    "extendedKeyUsages",
+    {
+        get: function extendedKeyUsages() {
+            this.checkContainsRawCertificate();
+            return certUtil.conversions.extendedKeyUsagesAsArrayOfStrings(
+                this.extensions.filter(ext => ext.extnID === "2.5.29.37"));
+        }
+    });
+Object.defineProperty(zkPkiCert.prototype,
     "expirationDate",
     {
         get: function expirationDate() {

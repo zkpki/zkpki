@@ -152,6 +152,29 @@ function getDnAttributeForOid(oid) {
     }
 }
 
+function getExtendedKeyUsageNameForOid(oid) {
+    switch (oid) {
+        case constants.ServerAuthentication:
+            return "ServerAuthentication";
+        case constants.ClientAuthentication:
+            return "ClientAuthentication";
+        case constants.CodeSigning:
+            return "CodeSigning";
+        case constants.EmailProtection:
+            return "EmailProtection";
+        case constants.TimeStamping:
+            return "TimeStamping";
+        case constants.OcspSigning:
+            return "OcspSigning";
+        case constants.MsCertificateTrustListSigning:
+            return "MsCertificateTrustListSigning";
+        case constants.MsEncryptedFileSystem:
+            return "MsEncryptedFileSystem";
+        default:
+            return oid;
+    }
+}
+
 exports.beautifyDnString = (dnString) => {
     let prettyDn = "";    
     dnString.match(/(?:\\,|[^,])+/g).forEach(function (dnPart) {
@@ -196,6 +219,30 @@ exports.getCertificateDateRange = (numDays) => {
     const expire = new Date(today.valueOf());    
     expire.setDate(expire.getDate() + numDays);
     return [today, expire];
+}
+
+exports.keyUsagesAsArrayOfStrings = (extensions) => {
+    // TODO: include tests too
+    const stringArray = [];
+    extensions.forEach(ext => {
+        if (ext.extnID === "2.5.29.15") {
+
+        }
+    });
+    //getExtendedKeyUsageNameForOid
+    return stringArray;
+}
+
+exports.extendedKeyUsagesAsArrayOfStrings = (extensions) => {
+    const stringArray = [];
+    extensions.forEach(ext => {
+        if (ext.extnID === "2.5.29.37") {
+            ext.parsedValue.keyPurposes.forEach(purpose => {
+                stringArray.push(getExtendedKeyUsageNameForOid(purpose));
+            });
+        }
+    });
+    return stringArray;
 }
 
 exports.algorithmOidToAlgorithmName = (algorithmOid) => {

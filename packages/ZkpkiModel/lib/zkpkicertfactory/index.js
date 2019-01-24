@@ -38,15 +38,25 @@ let ZkPkiCertFactory = function () {
     // load zkpki certificate from PEM data or raw pkijs
     this.loadCertificate = async (data = {}) => {
         let zkpkiCert = new ZkPkiCert(data);
-        // because generating PEM data from raw pkijs requires async function
+
+        // because some logic using pkijs below requires async functions
         // we have to put this logic here rather than in the ZkPkiCert constructor
+
+        // certificate
         if (zkpkiCert.certificatePemData === null && zkpkiCert.certificate === null) {
             throw new Error("Unable to create ZkPkiCert with no certificate object and no PEM");
         } else if (zkpkiCert.certificatePemData === null && zkpkiCert.certificate !== null) {
             zkpkiCert.certificatePemData = certUtil.conversions.berToPem("CERTIFICATE",
-                await zkpkiCert.certificate.toSchema(true).toBER(false));
+                zkpkiCert.certificate.toSchema(true).toBER(false));
         } else if (zkpkiCert.certificatePemData !== null && zkpkiCert.certificate === null) {
             zkpkiCert.certificate = rawCert.parseRawCertificate(certUtil.conversions.pemToBer(zkpkiCert.certificatePemData));
+        }
+
+        // private key
+        if (zkpkiCert.privateKeyPemData === null && zkpkiCert.privateKey !== null) {
+            // TODO:
+        } else if (zkpkiCert.privateKeyPemData !== null && zkpkiCert.privateKey === null) {
+            // TODO:
         }
         return zkpkiCert;
     }
