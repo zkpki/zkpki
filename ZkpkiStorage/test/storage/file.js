@@ -8,39 +8,61 @@ const storage = require("../../lib/storage").file;
 
 /*eslint no-undef: 0*/
 describe("Storage tests for file provider",  () => { 
-
-    let blob;
-    let key = "Ohneo4ahthahSeG9AeT0thai4Moineex";
-    let keyHash = "HBkpxPmA2123XGEGXpxVwcfDyi71ViNemDw46ohq1BdC";
-
-    beforeEach(async () => {
-        blob = await storage.open(key, { path: "./test" });
+    const key = "Ohneo4ahthahSeG9AeT0thai4Moineex";
+    const keyHash = "HBkpxPmA2123XGEGXpxVwcfDyi71ViNemDw46ohq1BdC";
+    const options = { path: "./test" };
+    const expectedFilename = "./test/" + keyHash;     
+            
+    it("test open() with no create", async () => {                
+        try {
+            await storage.open(key, options);
+            assert.ok(false); // should have thrown!
+        }
+        catch (err) {
+            // Empty
+            
+        }        
     });
 
-    it("test open()", async () => {        
-        assert.equal(blob.key, key);
-        assert.equal(blob.filename, "./test/" + keyHash);
-    });
-
-    it("test open() again", async () => {
-        let client = await storage.open(key, { path: "./test" });        
+    it("test create()", async () => {
+        let client = await storage.create(key, options);        
         assert.equal(client.key, key);
-        assert.equal(client.filename, "./test/" + keyHash);
+        assert.equal(client.filename, expectedFilename);
+        assert.equal(await client.get(), "");       
+    });
+
+    it("test create() then open()", async () => {
+        await storage.create(key, options);
+        let client = await storage.open(key, options);
+        assert.equal(client.key, key);
+        assert.equal(client.filename, expectedFilename);
         assert.equal(await client.get(), "");
     });
-    
-    it("test set() and get()", async () => {
+
+    it("test double create()", async () => {
+        await storage.create(key, options);
+        try {
+            await storage.create(key, options);
+            assert.ok(false); // should have thrown!
+        }
+        catch (err) {
+            // Empty           
+        } 
+    });
+                
+    it("test set() and get()", async () => {        
         let value = "This is a crazy cool value";
-        await blob.set(value);
-        let result = await blob.get();
+        let client = await storage.create(key, options);
+        await client.set(value);
+        let result = await client.get();
         assert.equal(result, value);        
     });
 
-    it("test delete()", async () => {        
-        let filename = blob.filename;
-        await storage.delete(key, { path: "./test" });        
+    it("test create() then delete()", async () => { 
+        await storage.create(key, options);       
+        await storage.delete(key, options);        
         try {
-            await statFileAsync(filename);
+            await statFileAsync(expectedFilename);
             assert.ok(false); // should have thrown!
         }
         catch (err) {
@@ -48,9 +70,18 @@ describe("Storage tests for file provider",  () => {
         }
     });
 
-    after(async () => {
+    beforeEach(async () => {
         try {
-            await unlinkFileAsync(blob.filename);
+            await unlinkFileAsync(expectedFilename);
+        }
+        catch (err) {
+            // ignore unlink errors
+        }
+    });
+
+    afterEach(async () => {
+        try {
+            await unlinkFileAsync(expectedFilename);
         }
         catch(err){
             // ignore unlink errors
