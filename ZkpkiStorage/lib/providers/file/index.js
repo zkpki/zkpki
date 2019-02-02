@@ -11,31 +11,43 @@ function generateFilename(key, options) {
     return options.path + "/" + crypto.hashBytes(key);
 }
 
-exports.open = async (key, options) => { 
+exports.create = async (key, options) => {
     const filename = generateFilename(key, options);
-    let result = {
-        key: key,
-        filename: filename,
-        get: async () => {            
-            return crypto.decryptBytes(key, await readfileAsync(filename));
-        },
-        set: async (buf) => {
-            return await writefileAsync(filename, crypto.encryptBytes(key,buf));
-        }
-    };
-
     try {
-        await statFileAsync(filename);
-        return result;
+        await statFileAsync(filename);       
     }
     catch (err) {
         try {
-            await writefileAsync(filename, crypto.encryptBytes(key,""));
-            return result;
+            await writefileAsync(filename, crypto.encryptBytes(key, ""));
+            return exports.open(key, options);
         }
         catch (err) {
             throw err;
         }
+    }
+
+    let err = new Error("File already exists: " + filename);
+    err.code = "EEXIST";
+    throw err;
+};
+
+exports.open = async (key, options) => { 
+    const filename = generateFilename(key, options);
+    try {
+        await statFileAsync(filename);
+        return {
+            key: key,
+            filename: filename,
+            get: async () => {
+                return crypto.decryptBytes(key, await readfileAsync(filename));
+            },
+            set: async (buf) => {
+                return await writefileAsync(filename, crypto.encryptBytes(key, buf));
+            }
+        };
+    }
+    catch (err) {  
+        throw err;        
     }  
 };
 

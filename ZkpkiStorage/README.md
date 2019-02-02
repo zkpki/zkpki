@@ -1,6 +1,6 @@
 ﻿# ZkpkiStorage
 
-A simple blob storage abstraction for Zkpki. 
+A simple data storage abstraction for Zkpki. 
 
 ZkpkiStorage hides the details of encrypting and storing data.  There is 
 a pluggable provider facility that allows implementations for multiple
@@ -12,29 +12,29 @@ storage mechanisms.
 // File may be replaced with alternative storage implementation
 const storage = require('../../lib/storage').file
 
-// Create/Open a blob using associated key and options
-var blob = await storage.open(key, options);
+// Open a storage using associated key and options.
+var data = await storage.open(key, options);
 
-// get the contents of the blob as a Buffer
-var buf = await blob.get();
+// get the contents of the data as a Buffer
+var buf = await data.get();
 
-// set the contents of the blob to specified Buffer
-await blob.set(buf);
+// set the contents of the data to specified Buffer
+await data.set(buf);
 
-// Delete the blob associated with a key and options
-var blob = await storage.delete(key, options);
+// Delete the data associated with a key and options
+await storage.delete(key, options);
 ```
 
 The `key` argument is always a 32 byte Buffer.  ZkpkiStorage providers
-guarentee that a blob created/opened with a key can be opened again 
+guarentee that a data created/opened with a key can be opened again 
 (or deleted) using the same key. 
 
-To "rename" a blob, the caller would do something like the following:
+To "rename" a data, the caller would do something like the following:
 ```javascript
-var blob = await storage.open(oldkey,options);
-var buf = await blob.get();
-var newBlob = await storage.open(newKey,options);
-await newBlob.set(buf);
+var data = await storage.open(oldkey,options);
+var buf = await data.get();
+var newData = await storage.create(newKey,options);
+await newData.set(buf);
 await storage.delete((oldkey,options);
 ```
 
@@ -43,11 +43,11 @@ await storage.delete((oldkey,options);
 The `options` parmeter is defined by the provider implementation.
 
 ### file
-The file provider stores blobs in a local filesystem directory specified by 
+The file provider stores data in a local filesystem directory specified by 
 the caller.
 ```
 var options = {
-	// The data storage path where blobs will be stored
+	// The data storage path where data will be stored
 	path: "/home/petrsnm/.zkpki/storage"
 }
 ```
