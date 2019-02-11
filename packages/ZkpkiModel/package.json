@@ -17,5 +17,9 @@
   },
   "devDependencies": {
     "mocha": "^5.2.0"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "36ae7a1b64041071ceace5d390633399c375991f"
 }

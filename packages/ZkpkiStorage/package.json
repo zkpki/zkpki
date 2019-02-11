@@ -17,5 +17,9 @@
   },
   "dependencies": {
     "bs58": "^4.0.1"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "36ae7a1b64041071ceace5d390633399c375991f"
 }
