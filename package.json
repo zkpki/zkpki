@@ -1,0 +1,12 @@
+{
+  "name": "zkpki-monorepo",
+  "private": true,
+  "scripts": {
+    "postinstall": "lerna exec -- npm install && lerna run prepare",
+    "deploy": "lerna publish -m \"chore: Publish\"",
+    "clean": "find . -name \"node_modules\" -exec rm -rf '{}' + && find . -name \"lib\" -exec rm -rf '{}' +"
+  },
+  "devDependencies": {
+    "lerna": "^3.11.0"
+  }
+}
