@@ -1,10 +1,14 @@
 {
-  "name": "zkpi-storage",
-  "version": "0.0.0",
+  "name": "@zkpi/storage",
+  "version": "0.0.1",
   "description": "ZKPKI Storage abstraction",
   "main": "lib/storage.js",
   "author": {
     "name": "Matt Peterson"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zkpki/zkpki.git"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

@@ -1,10 +1,14 @@
 {
-  "name": "zkpki-model",
+  "name": "@zkpki/model",
   "version": "0.0.0",
   "description": "Model for creating and handling certificates based on PKI.js",
   "main": "index.js",
   "author": {
     "name": "Dan Peterson"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zkpki/zkpki.git"
   },
   "dependencies": {
     "ip-address": "^5.8.9",
