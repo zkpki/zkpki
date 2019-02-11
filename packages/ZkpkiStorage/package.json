@@ -1,6 +1,6 @@
 {
   "name": "@zkpi/storage",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "ZKPKI Storage abstraction",
   "main": "lib/storage.js",
   "author": {
