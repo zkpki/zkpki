@@ -6,13 +6,17 @@
   "author": {
     "name": "Dan Peterson"
   },
+  "scripts": {
+    "test": "mocha"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zkpki/zkpki.git"
   },
   "dependencies": {
+    "@peculiar/webcrypto": "^1.0.5",
     "ip-address": "^5.8.9",
-    "node-webcrypto-ossl": "^1.0.39",
+    "node-webcrypto-ossl": "^1.0.42",
     "pkijs": "^2.1.72"
   },
   "devDependencies": {

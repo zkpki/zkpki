@@ -1,0 +1,18 @@
+﻿{
+  "extends": "eslint:recommended",
+  "parser": "babel-eslint",
+  "env": {
+    "node": true,
+    "es6": true
+  }, 
+  "rules": {
+    "indent": [ "error", 4 ],
+    "quotes": [ "error", "double" ],
+    "semi": [ "error", "always" ],
+    "no-var": [ "error" ],
+
+    "no-cond-assign": [ "error", "always" ],
+
+    "no-console": "off"
+  }
+}

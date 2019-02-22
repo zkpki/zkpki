@@ -1,10 +1,10 @@
 "use strict";
 
 // initialization of crypto
-const WebCryptoOpenSsl = require("node-webcrypto-ossl");
+const { Crypto } = require("@peculiar/webcrypto");
 const pkijs = require("pkijs");
 const asn1js = require("asn1js");
-const crypto = new WebCryptoOpenSsl();
+const crypto = new Crypto();
 pkijs.setEngine("ZkPki", crypto, new pkijs.CryptoEngine({ name: "", crypto: crypto, subtle: crypto.subtle }));
 
 const ipAddress = require("ip-address");
