@@ -1,6 +1,6 @@
 {
   "name": "@zkpki/model",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0",
   "description": "Model for creating and handling certificates based on PKI.js",
   "main": "index.js",
   "author": {
@@ -24,6 +24,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "gitHead": "36ae7a1b64041071ceace5d390633399c375991f"
+  }
 }
