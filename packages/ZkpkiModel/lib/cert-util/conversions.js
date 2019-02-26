@@ -229,7 +229,6 @@ exports.keyUsagesAsArrayOfStrings = (extensions) => {
 
         }
     });
-    //getExtendedKeyUsageNameForOid
     return stringArray;
 }
 

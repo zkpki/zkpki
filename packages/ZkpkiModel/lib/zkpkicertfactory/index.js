@@ -37,28 +37,28 @@ let ZkPkiCertFactory = function () {
 
     // load zkpki certificate from PEM data or raw pkijs
     this.loadCertificate = async (data = {}) => {
-        let zkpkiCert = new ZkPkiCert(data);
+        let zkPkiCert = new ZkPkiCert(data);
 
         // because some logic using pkijs below requires async functions
         // we have to put this logic here rather than in the ZkPkiCert constructor
 
         // certificate
-        if (zkpkiCert.certificatePemData === null && zkpkiCert.certificate === null) {
+        if (zkPkiCert.certificatePemData === null && zkPkiCert.certificate === null) {
             throw new Error("Unable to create ZkPkiCert with no certificate object and no PEM");
-        } else if (zkpkiCert.certificatePemData === null && zkpkiCert.certificate !== null) {
-            zkpkiCert.certificatePemData = certUtil.conversions.berToPem("CERTIFICATE",
-                zkpkiCert.certificate.toSchema(true).toBER(false));
-        } else if (zkpkiCert.certificatePemData !== null && zkpkiCert.certificate === null) {
-            zkpkiCert.certificate = rawCert.parseRawCertificate(certUtil.conversions.pemToBer(zkpkiCert.certificatePemData));
+        } else if (zkPkiCert.certificatePemData === null && zkPkiCert.certificate !== null) {
+            zkPkiCert.certificatePemData = certUtil.conversions.berToPem("CERTIFICATE",
+                zkPkiCert.certificate.toSchema(true).toBER(false));
+        } else if (zkPkiCert.certificatePemData !== null && zkPkiCert.certificate === null) {
+            zkPkiCert.certificate = rawCert.parseRawCertificate(certUtil.conversions.pemToBer(zkPkiCert.certificatePemData));
         }
 
         // private key
-        if (zkpkiCert.privateKeyPemData === null && zkpkiCert.privateKey !== null) {
+        if (zkPkiCert.privateKeyPemData === null && zkPkiCert.privateKey !== null) {
             // TODO:
-        } else if (zkpkiCert.privateKeyPemData !== null && zkpkiCert.privateKey === null) {
+        } else if (zkPkiCert.privateKeyPemData !== null && zkPkiCert.privateKey === null) {
             // TODO:
         }
-        return zkpkiCert;
+        return zkPkiCert;
     }
 
     // create zkpki root certificate authority
@@ -77,7 +77,7 @@ let ZkPkiCertFactory = function () {
             default:
                 throw new Error(`Unknown algorithm name: ${algorithm}`);
         }
-        const zkpkiCert = await this.createCertificate(keyPair,
+        const zkPkiCert = await this.createCertificate(keyPair,
             keyPair.publicKey,
             {
                 serialNumber: startingSerialNumber,
@@ -94,12 +94,12 @@ let ZkPkiCertFactory = function () {
                     certUtil.EXTENDED_KEY_USAGES.TimeStamping
                 ]
             });
-        zkpkiCert.privateKeyPemData =
+        zkPkiCert.privateKeyPemData =
             certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(keyPair));
-        return zkpkiCert;
+        return zkPkiCert;
     }
 
-    // create zkpki certificate from options
+    // create ZkPki certificate from options
     this.createCertificate = async (issuerKeyPair, subjectPublicKey, options = {}) => {
         validateCertificateOptions(options);
         return this.loadCertificate({
@@ -107,7 +107,7 @@ let ZkPkiCertFactory = function () {
         });
     }
 
-    // create zkpki certificate from CSR
+    // create ZkPki certificate from CSR
     this.createCertificateFromCsr = async (issuerKeyPair, csrPemData) => {
         validateCertificateSigningRequest(csrPemData);
 

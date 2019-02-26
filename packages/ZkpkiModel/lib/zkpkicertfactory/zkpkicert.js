@@ -109,7 +109,7 @@ Object.defineProperty(zkPkiCert.prototype,
     {
         get: function keyUsages() {
             this.checkContainsRawCertificate();
-            return certUtil.conversions.extendedKeyUsagesAsArrayOfStrings(
+            return certUtil.conversions.keyUsagesAsArrayOfStrings(
                 this.extensions.filter(ext => ext.extnID === "2.5.29.15"));
         }
     });
