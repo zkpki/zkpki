@@ -250,7 +250,11 @@ z2yaUBhvyrus
 
         it("Extended Key Usages",
             async function () {
-                assert.ok(false);
+                const data = certUtil.conversions.pemToBer(cert2PemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("ClientAuthentication"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("EmailProtection"));
             });
 
         it("Certificate and Private Key",
