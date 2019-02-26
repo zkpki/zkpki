@@ -223,7 +223,29 @@ z2yaUBhvyrus
 
         it("Key Usages",
             async function () {
-                assert.ok(false);
+                const data = certUtil.conversions.pemToBer(cert2PemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.ok(zkPkiCert.keyUsages.includes("DigitalSignature"));
+                assert.ok(zkPkiCert.keyUsages.includes("NonRepudiation"));
+                assert.ok(zkPkiCert.keyUsages.includes("KeyEncipherment"));
+                const keyPair = await rawCert.generateRsaKeyPair(certUtil.ALGORITHMS.RsaSsaPkcs1V1_5, 2048);
+                const raw2 = await rawCert.createRawCertificate(keyPair,
+                    keyPair.publicKey,
+                    {
+                        serialNumber: 456,
+                        issuerDn: "cn=foo",
+                        subjectDn: "cn=foo",
+                        lifetimeDays: 365 * 10,
+                        isCa: false,
+                        keyUsages: certUtil.KEY_USAGES.EncipherOnly |
+                            certUtil.KEY_USAGES.DecipherOnly |
+                            certUtil.KEY_USAGES.KeyEncipherment
+                    });
+                const zkPkiCert2 = new ZkPkiCert({ certificate: raw2 });
+                assert.ok(zkPkiCert2.keyUsages.includes("EncipherOnly"));
+                assert.ok(zkPkiCert2.keyUsages.includes("DecipherOnly"));
+                assert.ok(zkPkiCert2.keyUsages.includes("KeyEncipherment"));
             });
 
         it("Extended Key Usages",

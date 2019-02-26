@@ -110,7 +110,7 @@ Object.defineProperty(zkPkiCert.prototype,
         get: function keyUsages() {
             this.checkContainsRawCertificate();
             return certUtil.conversions.keyUsagesAsArrayOfStrings(
-                this.extensions.filter(ext => ext.extnID === "2.5.29.15"));
+                this.certificate.extensions.filter(ext => ext.extnID === "2.5.29.15"));
         }
     });
 Object.defineProperty(zkPkiCert.prototype,
@@ -119,7 +119,7 @@ Object.defineProperty(zkPkiCert.prototype,
         get: function extendedKeyUsages() {
             this.checkContainsRawCertificate();
             return certUtil.conversions.extendedKeyUsagesAsArrayOfStrings(
-                this.extensions.filter(ext => ext.extnID === "2.5.29.37"));
+                this.certificate.extensions.filter(ext => ext.extnID === "2.5.29.37"));
         }
     });
 Object.defineProperty(zkPkiCert.prototype,
