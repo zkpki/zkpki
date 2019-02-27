@@ -96,7 +96,7 @@ pPb5vOaOmWSqcTdsUEUVCDP8sTqu5yUXLODxbn4jfJs=
                 const keyPair = await rawCert.generateRsaKeyPair(certUtil.ALGORITHMS.RsaPss, 4096);
                 var serialNumber = 123;
                 const zkPkiCert = await zkPkiCertFactory.createCertificate(keyPair,
-                    keyPair.publicKey,
+                    certUtil.ALGORITHMS.RsaPss, 4096,
                     {
                         serialNumber: serialNumber,
                         issuerDn: "cn=foo",

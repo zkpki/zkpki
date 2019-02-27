@@ -26,11 +26,29 @@ function validateCertificateSigningRequest(csrPemData) {
     // TODO: write this
 }
 
-
 let ZkPkiCertFactory = function () {
     const certUtil = require("../cert-util");
     const rawCert = require("./rawcert.js");
     const ZkPkiCert = require("./zkpkicert.js");
+
+    // private functions
+    async function generateKeyPair(algorithm, keySizeOrCurveName) {
+        let keyPair = null;
+        switch (algorithm) {
+        case certUtil.ALGORITHMS.RsaSsaPkcs1V1_5:
+        case certUtil.ALGORITHMS.RsaPss:
+            keyPair = await rawCert.generateRsaKeyPair(algorithm || certUtil.ALGORITHMS.RsaSsaPkcs1V1_5,
+                keySizeOrCurveName || 2048);
+            break;
+        case certUtil.ALGORITHMS.Ecdsa:
+            keyPair = await rawCert.generateEcdsaKeyPair(
+                keySizeOrCurveName || certUtil.ELLIPTIC_CURVE_NAMES.NistP256);
+            break;
+        default:
+            throw new Error(`Unknown algorithm name: ${algorithm}`);
+        }
+        return keyPair;
+    }
 
     // constants
     const startingSerialNumber = 100000;
@@ -63,48 +81,41 @@ let ZkPkiCertFactory = function () {
 
     // create zkpki root certificate authority
     this.createCertificateAuthority = async (distinguishedName, lifetimeDays, algorithm, keySizeOrCurveName) => {
-        let keyPair = null;
-        switch (algorithm) {
-            case certUtil.ALGORITHMS.RsaSsaPkcs1V1_5:
-            case certUtil.ALGORITHMS.RsaPss:
-                keyPair = await rawCert.generateRsaKeyPair(algorithm || certUtil.ALGORITHMS.RsaSsaPkcs1V1_5,
-                        keySizeOrCurveName || 2048);
-                break;
-            case certUtil.ALGORITHMS.Ecdsa:
-                keyPair = await rawCert.generateEcdsaKeyPair(
-                    keySizeOrCurveName || certUtil.ELLIPTIC_CURVE_NAMES.NistP256);
-                break;
-            default:
-                throw new Error(`Unknown algorithm name: ${algorithm}`);
-        }
-        const zkPkiCert = await this.createCertificate(keyPair,
-            keyPair.publicKey,
-            {
-                serialNumber: startingSerialNumber,
-                issuerDn: distinguishedName,
-                subjectDn: distinguishedName,
-                lifetimeDays: lifetimeDays || (365 * 10),
-                isCa: true,
-                keyUsages: certUtil.KEY_USAGES.KeySignCert | certUtil.KEY_USAGES.CrlSign,
-                extendedKeyUsages: [
-                    certUtil.EXTENDED_KEY_USAGES.MsCertificateTrustListSigning,
-                    certUtil.EXTENDED_KEY_USAGES.ServerAuthentication,
-                    certUtil.EXTENDED_KEY_USAGES.ClientAuthentication,
-                    certUtil.EXTENDED_KEY_USAGES.OcspSigning,
-                    certUtil.EXTENDED_KEY_USAGES.TimeStamping
-                ]
-            });
+        const keyPair = await generateKeyPair(algorithm, keySizeOrCurveName);
+        const zkPkiCert = await this.loadCertificate({
+            certificate: await rawCert.createRawCertificate(keyPair,
+                keyPair.publicKey,
+                {
+                    serialNumber: startingSerialNumber,
+                    issuerDn: distinguishedName,
+                    subjectDn: distinguishedName,
+                    lifetimeDays: lifetimeDays || (365 * 10),
+                    isCa: true,
+                    keyUsages: certUtil.KEY_USAGES.KeySignCert | certUtil.KEY_USAGES.CrlSign,
+                    extendedKeyUsages: [
+                        certUtil.EXTENDED_KEY_USAGES.MsCertificateTrustListSigning,
+                        certUtil.EXTENDED_KEY_USAGES.ServerAuthentication,
+                        certUtil.EXTENDED_KEY_USAGES.ClientAuthentication,
+                        certUtil.EXTENDED_KEY_USAGES.OcspSigning,
+                        certUtil.EXTENDED_KEY_USAGES.TimeStamping
+                    ]
+                })
+        });
         zkPkiCert.privateKeyPemData =
             certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(keyPair));
         return zkPkiCert;
     }
 
     // create ZkPki certificate from options
-    this.createCertificate = async (issuerKeyPair, subjectPublicKey, parameters = {}) => {
+    this.createCertificate = async (issuerKeyPair, algorithm, keySizeOrCurveName, parameters = {}) => {
         validateCertificateParameters(parameters);
-        return this.loadCertificate({
-            certificate: await rawCert.createRawCertificate(issuerKeyPair, subjectPublicKey, parameters)
+        const keyPair = await generateKeyPair(algorithm, keySizeOrCurveName);
+        const zkPkiCert = this.loadCertificate({
+            certificate: await rawCert.createRawCertificate(issuerKeyPair, keyPair.publicKey, parameters)
         });
+        zkPkiCert.privateKeyPemData =
+            certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(keyPair));
+        return zkPkiCert;
     }
 
     // create ZkPki certificate from CSR
