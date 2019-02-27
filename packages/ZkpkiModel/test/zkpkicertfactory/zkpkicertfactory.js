@@ -1,5 +1,6 @@
 const assert = require("assert").strict;
 const certUtil = require("../../lib/cert-util");
+const rawCert = require("../../lib/zkpkicertfactory/rawcert.js");
 const zkPkiCertFactory = require("../../lib/zkpkicertfactory");
 
 describe("ZKIPKI Certificate Factory",
@@ -65,7 +66,39 @@ pPb5vOaOmWSqcTdsUEUVCDP8sTqu5yUXLODxbn4jfJs=
 
         it("Load Certificate From Raw",
             async function() {
-                assert.ok(false); // TODO:
+                const rsaSsa4096 = await rawCert.generateRsaKeyPair(certUtil.ALGORITHMS.RsaSsaPkcs1V1_5, 4096);
+                const serialNumber = 3456;
+                const raw = await rawCert.createRawCertificate(rsaSsa4096,
+                    rsaSsa4096.publicKey,
+                    {
+                        serialNumber: serialNumber,
+                        issuerDn: "CN=dan test,C=US",
+                        subjectDn: "CN=dan test,C=US",
+                        lifetimeDays: 100,
+                        keyUsages: certUtil.KEY_USAGES.KeySignCert | certUtil.KEY_USAGES.KeyAgreement | certUtil.KEY_USAGES.DigitalSignature,
+                        extendedKeyUsages: [
+                            certUtil.EXTENDED_KEY_USAGES.MsCertificateTrustListSigning,
+                            certUtil.EXTENDED_KEY_USAGES.ServerAuthentication,
+                            certUtil.EXTENDED_KEY_USAGES.ClientAuthentication
+                        ]
+                    });
+                const zkPkiCert = await zkPkiCertFactory.loadCertificate({
+                    certificate: raw,
+                    privateKey: rsaSsa4096.privateKey
+                });
+                assert.ok(zkPkiCert.certificatePemData !== null);
+                assert.ok(zkPkiCert.certificate !== null);
+                assert.ok(zkPkiCert.privateKeyPemData !== null);
+                assert.ok(zkPkiCert.privateKey !== null);
+                assert.deepEqual(zkPkiCert.serialNumber, serialNumber.toString(16));
+                assert.deepEqual(zkPkiCert.issuer, "CN=dan test,C=US");
+                assert.deepEqual(zkPkiCert.subject, "CN=dan test,C=US");
+                assert.ok(zkPkiCert.keyUsages.includes("KeySignCert"));
+                assert.ok(zkPkiCert.keyUsages.includes("KeyAgreement"));
+                assert.ok(zkPkiCert.keyUsages.includes("DigitalSignature"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("MsCertificateTrustListSigning"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("ServerAuthentication"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("ClientAuthentication"));
             });
 
         it("Create Certificate Authority",
@@ -134,9 +167,18 @@ pPb5vOaOmWSqcTdsUEUVCDP8sTqu5yUXLODxbn4jfJs=
                 assert.ok(zkPkiCert.certificatePemData, "Certificate PEM is not empty");
                 assert.ok(zkPkiCert.privateKeyPemData, "Private key PEM is not empty");
                 assert.ok(zkPkiCert.certificate, "Raw certificate is not empty");
-                // TODO: assert.ok(zkPkiCert.privateKey, "Raw private key is not empty");
-                // TODO: parse certificate and check values directly
-                // TODO: check that authority key identifier matches subject key identifier
+                assert.ok(zkPkiCert.privateKey, "Raw private key is not empty");
+                assert.ok(zkPkiCert.isCa, "Is CA");
+                assert.deepEqual(zkPkiCert.publicKeyAlgorithm, certUtil.ALGORITHMS.RsaPss);
+                assert.deepEqual(zkPkiCert.publicKeySize, 4096);
+                assert.ok(zkPkiCert.keyUsages.includes("KeySignCert"));
+                assert.ok(zkPkiCert.keyUsages.includes("CrlSign"));
+                assert.ok(zkPkiCert.keyUsages.includes("DigitalSignature"));
+                assert.ok(zkPkiCert.keyUsages.includes("KeyAgreement"));
+                assert.ok(zkPkiCert.keyUsages.includes("KeyEncipherment"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("ServerAuthentication"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("ClientAuthentication"));
+                // TODO: check subject alternative names
             });
 
         it("Create Certificate From CSR",
