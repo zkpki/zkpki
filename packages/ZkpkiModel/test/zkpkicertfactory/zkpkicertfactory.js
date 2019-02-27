@@ -74,7 +74,7 @@ pPb5vOaOmWSqcTdsUEUVCDP8sTqu5yUXLODxbn4jfJs=
                     365 * 5,
                     certUtil.ALGORITHMS.RsaSsaPkcs1V1_5,
                     2048);
-                serialNumber = 100000;
+                const serialNumber = 100000;
                 assert.ok(zkPkiCert.serialNumber === serialNumber.toString(16), "Root CA certificate serial number");
                 assert.ok(zkPkiCert.subject === "CN=dan peterson,O=company,C=US", "Beautified subject distinguished name");
                 const now = new Date();
@@ -86,8 +86,15 @@ pPb5vOaOmWSqcTdsUEUVCDP8sTqu5yUXLODxbn4jfJs=
                 assert.ok(zkPkiCert.certificatePemData, "Certificate PEM is not empty");
                 assert.ok(zkPkiCert.privateKeyPemData, "Private key PEM is not empty");
                 assert.ok(zkPkiCert.isCa);
-                // TODO: parse certificate and check values directly
-                // TODO: check that authority key identifier matches subject key identifier
+                assert.deepEqual(zkPkiCert.publicKeyAlgorithm, certUtil.ALGORITHMS.RsaSsaPkcs1V1_5);
+                assert.deepEqual(zkPkiCert.publicKeySize, 2048);
+                assert.ok(zkPkiCert.keyUsages.includes("KeySignCert"));
+                assert.ok(zkPkiCert.keyUsages.includes("CrlSign"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("MsCertificateTrustListSigning"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("ServerAuthentication"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("ClientAuthentication"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("OcspSigning"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("TimeStamping"));
             });
 
         it("Create Certificate",
