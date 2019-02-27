@@ -152,6 +152,29 @@ function getDnAttributeForOid(oid) {
     }
 }
 
+function getExtendedKeyUsageNameForOid(oid) {
+    switch (oid) {
+        case constants.EXTENDED_KEY_USAGES.ServerAuthentication:
+            return "ServerAuthentication";
+        case constants.EXTENDED_KEY_USAGES.ClientAuthentication:
+            return "ClientAuthentication";
+        case constants.EXTENDED_KEY_USAGES.CodeSigning:
+            return "CodeSigning";
+        case constants.EXTENDED_KEY_USAGES.EmailProtection:
+            return "EmailProtection";
+        case constants.EXTENDED_KEY_USAGES.TimeStamping:
+            return "TimeStamping";
+        case constants.EXTENDED_KEY_USAGES.OcspSigning:
+            return "OcspSigning";
+        case constants.EXTENDED_KEY_USAGES.MsCertificateTrustListSigning:
+            return "MsCertificateTrustListSigning";
+        case constants.EXTENDED_KEY_USAGES.MsEncryptedFileSystem:
+            return "MsEncryptedFileSystem";
+        default:
+            return oid;
+    }
+}
+
 exports.beautifyDnString = (dnString) => {
     let prettyDn = "";    
     dnString.match(/(?:\\,|[^,])+/g).forEach(function (dnPart) {
@@ -196,6 +219,57 @@ exports.getCertificateDateRange = (numDays) => {
     const expire = new Date(today.valueOf());    
     expire.setDate(expire.getDate() + numDays);
     return [today, expire];
+}
+
+exports.keyUsagesAsArrayOfStrings = (extensions) => {
+    const stringArray = [];
+    extensions.forEach(ext => {
+        if (ext.extnID === "2.5.29.15") {
+            let valSize = ext.parsedValue.valueBlock.valueHex.byteLength;
+            let val = new Uint8Array(ext.parsedValue.valueBlock.valueHex, 0, valSize);
+            if (valSize > 1) {
+                // Do something weird here to get my constants back
+                stringArray.push("DecipherOnly");
+            }
+            if ((val[0] & constants.KEY_USAGES.DigitalSignature) === constants.KEY_USAGES.DigitalSignature) {
+                stringArray.push("DigitalSignature");
+            }
+            if ((val[0] & constants.KEY_USAGES.NonRepudiation) === constants.KEY_USAGES.NonRepudiation) {
+                stringArray.push("NonRepudiation");
+            }
+            if ((val[0] & constants.KEY_USAGES.KeyEncipherment) === constants.KEY_USAGES.KeyEncipherment) {
+                stringArray.push("KeyEncipherment");
+            }
+            if ((val[0] & constants.KEY_USAGES.DataEncipherment) === constants.KEY_USAGES.DataEncipherment) {
+                stringArray.push("DataEncipherment");
+            }
+            if ((val[0] & constants.KEY_USAGES.KeyAgreement) === constants.KEY_USAGES.KeyAgreement) {
+                stringArray.push("KeyAgreement");
+            }
+            if ((val[0] & constants.KEY_USAGES.KeySignCert) === constants.KEY_USAGES.KeySignCert) {
+                stringArray.push("KeySignCert");
+            }
+            if ((val[0] & constants.KEY_USAGES.CrlSign) === constants.KEY_USAGES.CrlSign) {
+                stringArray.push("CrlSign");
+            }
+            if ((val[0] & constants.KEY_USAGES.EncipherOnly) === constants.KEY_USAGES.EncipherOnly) {
+                stringArray.push("EncipherOnly");
+            }
+        }
+    });
+    return stringArray;
+}
+
+exports.extendedKeyUsagesAsArrayOfStrings = (extensions) => {
+    const stringArray = [];
+    extensions.forEach(ext => {
+        if (ext.extnID === "2.5.29.37") {
+            ext.parsedValue.keyPurposes.forEach(purpose => {
+                stringArray.push(getExtendedKeyUsageNameForOid(purpose));
+            });
+        }
+    });
+    return stringArray;
 }
 
 exports.algorithmOidToAlgorithmName = (algorithmOid) => {

@@ -1,4 +1,4 @@
-﻿'use strict';
+﻿"use strict";
 
 module.exports = Object.freeze({
     KEY_USAGES: {
@@ -15,12 +15,15 @@ module.exports = Object.freeze({
     EXTENDED_KEY_USAGES: {
         ServerAuthentication: "1.3.6.1.5.5.7.3.1",
         ClientAuthentication: "1.3.6.1.5.5.7.3.2",
-        CodeSigning: "1.3.6.1.5.5.7.3.2",
+        CodeSigning: "1.3.6.1.5.5.7.3.3",
         EmailProtection: "1.3.6.1.5.5.7.3.4",
-        TimeStamping: "1.3.6.1.5.5.7.3.4",
+        TimeStamping: "1.3.6.1.5.5.7.3.8",
         OcspSigning: "1.3.6.1.5.5.7.3.9",
-        MsCertificateTrustListSigning: "1.3.6.1.5.5.7.3.9",
-        MsEncryptedFileSystem: "1.3.6.1.5.5.7.3.9"
+        MsCertificateTrustListSigning: "1.3.6.1.4.1.311.10.3.1",
+        MsEncryptedFileSystem: "1.3.6.1.4.1.311.10.3.4"
+        // More found here:
+        // https://docs.microsoft.com/en-us/windows/desktop/api/CertEnroll/nn-certenroll-ix509extensionenhancedkeyusage
+        // If you add more, please add to conversions.js for text representation
     },
     ALGORITHMS: {
         RsaSsaPkcs1V1_5: "RSASSA-PKCS1-v1_5",

@@ -114,6 +114,7 @@ function getSubjectAlternativeNamesExtension(subjectAlternativeNames) {
 
 exports.generateRsaKeyPair = async (algorithmName, keySize) => {
     const algorithm = pkijs.getAlgorithmParameters(algorithmName, "generatekey");
+    algorithm.algorithm.hash.name = "SHA-256";
     if (keySize)
         algorithm.algorithm.modulusLength = keySize;
     return await pkijs.getCrypto().generateKey(algorithm.algorithm, true, algorithm.usages);
@@ -126,8 +127,20 @@ exports.generateEcdsaKeyPair = async (curveName) => {
     return await pkijs.getCrypto().generateKey(algorithm.algorithm, true, algorithm.usages);
 }
 
-exports.exportPrivateKey = async (keyPair) => {
-    return await pkijs.getCrypto().exportKey("pkcs8", keyPair.privateKey);
+exports.exportPrivateKey = async (privateKey) => {
+    return await pkijs.getCrypto().exportKey("pkcs8", privateKey);
+}
+
+exports.importRsaPrivateKey = async (pkcs8Buffer, algorithmName) => {
+    const algorithm = pkijs.getAlgorithmParameters(algorithmName, "importkey");
+    algorithm.algorithm.hash.name = "SHA-256";
+    return await pkijs.getCrypto().importKey("pkcs8", pkcs8Buffer, algorithm.algorithm, true, ["sign"]);
+}
+
+exports.importEcdsaPrivateKey = async (pkcs8Buffer, curveName) => {
+    const algorithm = pkijs.getAlgorithmParameters(certUtil.ALGORITHMS.Ecdsa, "importkey");
+    algorithm.algorithm.namedCurve = curveName;
+    return await pkijs.getCrypto().importKey("pkcs8", pkcs8Buffer, algorithm.algorithm, true, ["sign"]);
 }
 
 exports.createRawCertificate = async (issuerKeyPair, subjectPublicKey, options = {}) => {
@@ -170,4 +183,12 @@ exports.parseRawCertificate = (certificateBuffer) => {
         throw new Error(`Unable to parse raw certificate: ${asn1.result.error}`);
     }
     return new pkijs.Certificate({ schema: asn1.result });
+}
+
+exports.parseRawPrivateKey = (privateKeyBuffer) => {
+    const asn1 = asn1js.fromBER(privateKeyBuffer);
+    if (asn1.result.error) {
+        throw new Error(`Unable to parse raw private key: ${asn1.result.error}`);
+    }
+    return new pkijs.PrivateKeyInfo({ schema: asn1.result });
 }

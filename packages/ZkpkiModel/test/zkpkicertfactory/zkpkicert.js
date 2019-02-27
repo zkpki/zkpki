@@ -42,6 +42,64 @@ A/oKPpyHaqT3J2nsBEnivI/VFMwLs3qKiOwdCiha++Ztheu1D5T3lzXkgiqFZbsU
 4boZorVl01/o0m+flu8JwpFBUTkbzNRHMlpMx3qCNEUZWkp9Pvr8HW96E5GZQEyQ
 rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
 -----END CERTIFICATE-----`;
+        const cert2PrivateKeyPemString = `-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDHihwSfTUvXSyQ
+P0LT4BePxe7iVpgqDN0lajPWfb9QJpsxAFC2jxQI55BKmejiDJ/knDgVWLqf5Mrj
+Lo+tLedMDgUou9HsOnJKuU+fV1n8kD7vWCN6e0kUjyeLiswpflx6xyXIg+IZQO2/
+itInPc9JZhnwiQXFwp8gPQL8q5/DfUc85cf+twD/GrL8u++I7FF1U0T6RS6oytLx
+U18kxVWRAqKJ7/Yr7njQ/Pe/b6TPGaQnO0kSOuN8+p0P/2lYYYfBtsUtwrzwtaIQ
+IAO6sTQNblzGZrELFBc11NrG8unNvBzjlLde6c74dAGQr05t6F83bxtSz5w8pkmk
+WufiWLxbAgMBAAECggEBALO7E/QXcYt7GoPHZ5NeuvpWqAiZRTBDLALieVTPKT6x
+t4HYrdryX3Jx2cdIgLrz8iXCDMY1iMwzEgi1zNaJjVg1HLKHEtv7/SyPZEe7L6PN
+7dI6iqJtX/MzysPnPmR1nCk/LipBmKt0j3HDQe30v7x2ShEd6uQpnJk2O3WJxTsY
+CdT1n46hWoBHwa6YUErt3MVTUubrKs7Pj4jRkijCCQUleOLvLPnJ6iHQyJ9FCyHT
+/7F2TBC4SHWhrnsM0mLw6MnpTvmcwClFE59kfVrrMU9rKmiy64ODDA8AgNnm0vdj
+xo/njG8Hu7cKhAO+YziBQzDhP+fEy21bg0fM398Dx2ECgYEA8L79Iz9UzH+BzzBp
+eLWEzkqNyI67npgQPN6CfcSWQNU1JUF0mkVfrRpWq731UOI+ZpzDzjXDZW/MSVfg
+aojaBPhAYnwUYqo/ylpH1b90CNLIKO3XIdDzfEmVFSVeiLIzevPs7UXHQmYxrX1a
+NjasLwe/v6A6XSFIRpS3NyJXuCsCgYEA1C67SKFr9S8jIZGRh2z3ZHvsfCnEP4u8
+5WzEdLAUAyJsoQLwLnguM0nEsOLOR8UeXbDzX3mO25cZvppRY+ro9k8SUQoo4gOV
+Paa1eEACDeN+DvMpI3vuGg2Zqw3Yypnus5IRoSyuBMS2GLR04f6R05IsicDZA+11
+ikc2rzg6RJECgYBQUdgQr2tyQsQjROqbbCwfyz3cgMpV0jPwqufsX+8lODzf7iOh
+6K1QCm6KI/k5gBIDmB+3p7ZGHHOSsK/du0TJza1lbjI67MQVleNLi/GBlBlVlmxl
+CtqBR+dmQ65zesi0J7ePPe2J2KCQWjcDyV/O3Q37N9DhC16atbkeuuV7OwKBgCWs
+Nmxq3LQnrmEja2dUHYilyBMzhziRIvTJHwhoyuTTk93ym5pklC9fBaEyY9WyVfXk
+mRF2j7rFVTjWRWUsLDivSV1CJIgcgr7zfnzfQH4eyh71ZXR7aIcPqx0H1FoEgrE3
+WhH30N3f30T7pVUK0fFynp3Gs8FSw+/NPRRXM2FBAoGBAKCnEbIGgmlcq0C95uTr
+eBgWiAzm5CRcCLidMa3gSKGde6gPBZVmTeAiWGZXboFjatfo8YUevbmiN/C6vQzS
+hD5rEeXSAOS4+WqdaOHI8vMD5523436jb/ehyVzLmJnZXxO0qTDfTK08ZGZdFd1g
+QmtblochXATMdn1BLoowtLgz
+-----END PRIVATE KEY-----`;
+        const cert2PemString = `-----BEGIN CERTIFICATE-----
+MIIFFTCCAv2gAwIBAgICEAAwDQYJKoZIhvcNAQELBQAwXjELMAkGA1UEBhMCVVMx
+DTALBgNVBAgMBFV0YWgxGTAXBgNVBAoMEE9uZSBJZGVudGl0eSBMTEMxDDAKBgNV
+BAsMA1BBTTEXMBUGA1UEAwwOaXNzdWluZy1CbHVlQ0EwHhcNMTgwOTEyMDIzNDM3
+WhcNMjAwOTExMDIzNDM3WjBpMQswCQYDVQQGEwJVUzENMAsGA1UECAwEVXRhaDEP
+MA0GA1UEBwwGTGluZG9uMRkwFwYDVQQKDBBPbmUgSWRlbnRpdHkgTExDMQwwCgYD
+VQQLDANQQU0xETAPBgNVBAMMCEJsdWVVc2VyMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEAx4ocEn01L10skD9C0+AXj8Xu4laYKgzdJWoz1n2/UCabMQBQ
+to8UCOeQSpno4gyf5Jw4FVi6n+TK4y6PrS3nTA4FKLvR7DpySrlPn1dZ/JA+71gj
+entJFI8ni4rMKX5cesclyIPiGUDtv4rSJz3PSWYZ8IkFxcKfID0C/Kufw31HPOXH
+/rcA/xqy/LvviOxRdVNE+kUuqMrS8VNfJMVVkQKiie/2K+540Pz3v2+kzxmkJztJ
+EjrjfPqdD/9pWGGHwbbFLcK88LWiECADurE0DW5cxmaxCxQXNdTaxvLpzbwc45S3
+XunO+HQBkK9ObehfN28bUs+cPKZJpFrn4li8WwIDAQABo4HRMIHOMAkGA1UdEwQC
+MAAwEQYJYIZIAYb4QgEBBAQDAgWgMD8GCWCGSAGG+EIBDQQyFjBHZW5lcmF0ZWQg
+Q2xpZW50IENlcnRpZmljYXRlIGZyb20gaXNzdWluZy1CbHVlQ0EwHQYDVR0OBBYE
+FKQrgXUQABNF3y2II6RTlSejGuzMMB8GA1UdIwQYMBaAFH62ypnwC6x+9fo+b6CU
+U4hL8pgFMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYB
+BQUHAwQwDQYJKoZIhvcNAQELBQADggIBAC1UhgOm5itSvs/Vd5CG8VPTsoxqNtCx
+eNSYiq/LrPwZYXO/w1RWpWYp/xe7QpNB4szELmlJtxTPqA4KQiTg+v5QDks26+Oe
+WPpR+qTcxtJjVz/h+N035KP5D0cTYs1Mw6ZvaWBgsWiOAPxIo6dXktv24r8Rxgt2
+8R8s8SR9o89nZsBsv0N/XafZvTyQdopDRkAOO80q6tdCntVvTHfjjuLixSLMm4jc
+srdouL+Zwem2BqGU4lk5aEPkz1xvm76PwsyDlityYuVFqENLegGhS+w4evmkYvO/
+tJ9SbysI35XGMyckqgwyUZf1dNzlp2Qvklh7FNtYdxZjuKtR/hySbSL7lquV3//j
+SeuXVb3T7YOt7TBnHgBKzg7Uloa3OpCan3rfAANCCiGIazBUU9VaqrP95hoH3wI8
+b4XwFWRmhzIKr7rjSqFXBYcNxNU07Y8/rTK8ausBrD44WhxpaXtEGC++a8v7kp08
+NvAEt8UwQBEzN0dfh6T2KBCT26hbHOtmdgFMqjKTy62el7ZDtbNyr73doBCQNL1G
+m/KQtiYxDwssGrHD/KerXRNYeYetuWs8LR5x2VKTOH443sulSKG9iJS+NHtiSiAe
+8l4Zpkzxqy231xdL8PePrwvAVTUDyh91QFCAnxW+ifsb9xn/JKmM9vL5+SFq2eTh
+z2yaUBhvyrus
+-----END CERTIFICATE-----`;
 
         it("Constructor -- Null",
             async function () {
@@ -65,7 +123,9 @@ rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
                 assert.throws(() => zkPkiCertEmpty.issuer, Error);
                 assert.throws(() => zkPkiCertEmpty.issueDate, Error);
                 assert.throws(() => zkPkiCertEmpty.expirationDate, Error);
-                // TODO: add key size and algorithm
+                assert.throws(() => zkPkiCertEmpty.publicKeyAlgorithm, Error);
+                assert.throws(() => zkPkiCertEmpty.publicKeySize, Error);
+                assert.throws(() => zkPkiCertEmpty.ellipticCurveName, Error);
             });
 
         it("Constructor -- Raw Certificate",
@@ -76,6 +136,7 @@ rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
                 assert.ok(zkPkiCert.certificatePemData === null);
                 assert.ok(zkPkiCert.certificate !== null);
                 assert.ok(zkPkiCert.privateKeyPemData === null);
+                assert.ok(zkPkiCert.privateKey === null);
             });
 
         it("Constructor -- PEM Data (Cert Only)",
@@ -84,12 +145,22 @@ rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
                 assert.ok(zkPkiCert.certificatePemData !== null);
                 assert.ok(zkPkiCert.certificate === null);
                 assert.ok(zkPkiCert.privateKeyPemData === null);
+                assert.ok(zkPkiCert.privateKey === null);
                 assert.deepEqual(zkPkiCert.certificatePemData, certPemString);
             });
 
         it("Constructor -- PEM Data (Cert and Private Key)",
-            async function() {
-                assert.ok(false); // TODO:
+            async function () {
+                const zkPkiCert = new ZkPkiCert({
+                    certificatePemData: cert2PemString,
+                    privateKeyPemData: cert2PrivateKeyPemString
+                });
+                assert.ok(zkPkiCert.certificatePemData !== null);
+                assert.ok(zkPkiCert.certificate === null);
+                assert.ok(zkPkiCert.privateKeyPemData !== null);
+                assert.ok(zkPkiCert.privateKey === null);
+                assert.deepEqual(zkPkiCert.certificatePemData, cert2PemString);
+                assert.deepEqual(zkPkiCert.privateKeyPemData, cert2PrivateKeyPemString);
             });
 
         it("Serial Number Property",
@@ -135,7 +206,7 @@ rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
             });
 
         it("Public Key Algorithm Property",
-            async function() {
+            async function () {
                 const data = certUtil.conversions.pemToBer(certPemString);
                 const raw = rawCert.parseRawCertificate(data);
                 const zkPkiCert = new ZkPkiCert({ certificate: raw });
@@ -148,5 +219,57 @@ rL7zS5eFOUbIg+x3dULTw9hmzkfUY0H5C3HogVs1Nu3UWw==
                 const raw = rawCert.parseRawCertificate(data);
                 const zkPkiCert = new ZkPkiCert({ certificate: raw });
                 assert.deepEqual(zkPkiCert.publicKeySize, 4096);
+            });
+
+        it("Key Usages",
+            async function () {
+                const data = certUtil.conversions.pemToBer(cert2PemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.ok(zkPkiCert.keyUsages.includes("DigitalSignature"));
+                assert.ok(zkPkiCert.keyUsages.includes("NonRepudiation"));
+                assert.ok(zkPkiCert.keyUsages.includes("KeyEncipherment"));
+                const keyPair = await rawCert.generateRsaKeyPair(certUtil.ALGORITHMS.RsaSsaPkcs1V1_5, 2048);
+                const raw2 = await rawCert.createRawCertificate(keyPair,
+                    keyPair.publicKey,
+                    {
+                        serialNumber: 456,
+                        issuerDn: "cn=foo",
+                        subjectDn: "cn=foo",
+                        lifetimeDays: 365 * 10,
+                        isCa: false,
+                        keyUsages: certUtil.KEY_USAGES.EncipherOnly |
+                            certUtil.KEY_USAGES.DecipherOnly |
+                            certUtil.KEY_USAGES.KeyEncipherment
+                    });
+                const zkPkiCert2 = new ZkPkiCert({ certificate: raw2 });
+                assert.ok(zkPkiCert2.keyUsages.includes("EncipherOnly"));
+                assert.ok(zkPkiCert2.keyUsages.includes("DecipherOnly"));
+                assert.ok(zkPkiCert2.keyUsages.includes("KeyEncipherment"));
+            });
+
+        it("Extended Key Usages",
+            async function () {
+                const data = certUtil.conversions.pemToBer(cert2PemString);
+                const raw = rawCert.parseRawCertificate(data);
+                const zkPkiCert = new ZkPkiCert({ certificate: raw });
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("ClientAuthentication"));
+                assert.ok(zkPkiCert.extendedKeyUsages.includes("EmailProtection"));
+            });
+
+        it("Certificate and Private Key",
+            async function() {
+                const certData = certUtil.conversions.pemToBer(cert2PemString);
+                const privateKeyData = certUtil.conversions.pemToBer(cert2PrivateKeyPemString);
+                const rawC = rawCert.parseRawCertificate(certData);
+                const rawK = rawCert.parseRawPrivateKey(privateKeyData);
+                const zkPkiCert = new ZkPkiCert({
+                    certificate: rawC,
+                    privateKey: rawK
+                });
+                assert.deepEqual(zkPkiCert.publicKeyAlgorithm, certUtil.ALGORITHMS.RsaSsaPkcs1V1_5);
+                const privateKey = await zkPkiCert.getCryptoPrivateKey();
+                assert.deepEqual(zkPkiCert.publicKeyAlgorithm, privateKey.algorithm.name);
+                assert.deepEqual(zkPkiCert.publicKeySize, privateKey.algorithm.modulusLength);
             });
     });
