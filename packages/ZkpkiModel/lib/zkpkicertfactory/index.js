@@ -1,18 +1,18 @@
 ﻿"use strict";
 
-function validateCertificateOptions(options) {
-    if (!Number.isInteger(options.serialNumber))
+function validateCertificateParameters(parameters) {
+    if (!Number.isInteger(parameters.serialNumber))
         throw new Error("serialNumber option is required and must be an integer");
-    if (!Number.isInteger(options.lifetimeDays))
+    if (!Number.isInteger(parameters.lifetimeDays))
         throw new Error("lifetimeDays option is required and must be an integer");
-    if (!options.issuerDn)
+    if (!parameters.issuerDn)
         throw new Error("issuerDn option is required");
-    if (!options.subjectDn)
+    if (!parameters.subjectDn)
         throw new Error("subjectDn option is required");
-    if (options.subjectAlterativeNames) {
-        if (!Array.isArray(options.subjectAlternativeNames))
+    if (parameters.subjectAlterativeNames) {
+        if (!Array.isArray(parameters.subjectAlternativeNames))
             throw new Error("subjectAlternativeNames option must be an array");
-        options.subjectAlternativeNames.forEach(sAN => {
+        parameters.subjectAlternativeNames.forEach(sAN => {
             if (!("ip" in sAN || "dns" in sAN)) {
                 throw new Error(
                     "subjectAlternativeNames option is an array of objects with a single property, "
@@ -100,10 +100,10 @@ let ZkPkiCertFactory = function () {
     }
 
     // create ZkPki certificate from options
-    this.createCertificate = async (issuerKeyPair, subjectPublicKey, options = {}) => {
-        validateCertificateOptions(options);
+    this.createCertificate = async (issuerKeyPair, subjectPublicKey, parameters = {}) => {
+        validateCertificateParameters(parameters);
         return this.loadCertificate({
-            certificate: await rawCert.createRawCertificate(issuerKeyPair, subjectPublicKey, options)
+            certificate: await rawCert.createRawCertificate(issuerKeyPair, subjectPublicKey, parameters)
         });
     }
 

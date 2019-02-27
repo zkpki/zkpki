@@ -26,6 +26,7 @@ let zkPkiCert = function (parameters = {}) {
     }
 }
 
+// private methods
 Object.defineProperty(zkPkiCert.prototype,
     "checkContainsRawCertificate",
     {
@@ -36,7 +37,6 @@ Object.defineProperty(zkPkiCert.prototype,
             }
         }
     });
-
 Object.defineProperty(zkPkiCert.prototype,
     "checkContainsRawPrivateKey",
     {
@@ -47,18 +47,6 @@ Object.defineProperty(zkPkiCert.prototype,
             }
         }
     });
-
-
-Object.defineProperty(zkPkiCert.prototype,
-    "toPkcs12",
-    {
-        enumerable: false,
-        value: async function toPkcs12() {
-            this.checkContainsRawPrivateKey();
-            // TODO:
-        }
-    });
-
 Object.defineProperty(zkPkiCert.prototype,
     "getCryptoPrivateKey",
     {
@@ -69,6 +57,18 @@ Object.defineProperty(zkPkiCert.prototype,
         }
     });
 
+// public methods
+Object.defineProperty(zkPkiCert.prototype,
+    "toPkcs12",
+    {
+        enumerable: true,
+        value: async function toPkcs12() {
+            this.checkContainsRawPrivateKey();
+            // TODO:
+        }
+    });
+
+// public properties
 Object.defineProperty(zkPkiCert.prototype,
     "serialNumber",
     {
@@ -105,12 +105,36 @@ Object.defineProperty(zkPkiCert.prototype,
         }
     });
 Object.defineProperty(zkPkiCert.prototype,
+    "expirationDate",
+    {
+        get: function expirationDate() {
+            this.checkContainsRawCertificate();
+            return this.certificate.notAfter.value;
+        }
+    });
+Object.defineProperty(zkPkiCert.prototype,
+    "isCa",
+    {
+        get: function keyUsages() {
+            this.checkContainsRawCertificate();
+            return this.certificate.extensions.filter(ext => ext.extnID === "2.5.29.19").every(ext => ext.parsedValue.cA);
+        }
+    });
+Object.defineProperty(zkPkiCert.prototype,
     "keyUsages",
     {
         get: function keyUsages() {
             this.checkContainsRawCertificate();
             return certUtil.conversions.keyUsagesAsArrayOfStrings(
                 this.certificate.extensions.filter(ext => ext.extnID === "2.5.29.15"));
+        }
+    });
+Object.defineProperty(zkPkiCert.prototype,
+    "keyUsagesCritical",
+    {
+        get: function keyUsagesCritical() {
+            this.checkContainsRawCertificate();
+            return this.certificate.extensions.filter(ext => ext.extnID == "2.5.29.15").every(ext => ext.critical);
         }
     });
 Object.defineProperty(zkPkiCert.prototype,
@@ -123,11 +147,11 @@ Object.defineProperty(zkPkiCert.prototype,
         }
     });
 Object.defineProperty(zkPkiCert.prototype,
-    "expirationDate",
+    "extendedKeyUsagesCritical",
     {
-        get: function expirationDate() {
+        get: function extendedKeyUsagesCritical() {
             this.checkContainsRawCertificate();
-            return this.certificate.notAfter.value;
+            return this.certificate.extensions.filter(ext => ext.extnID == "2.5.29.37").every(ext => ext.critical);
         }
     });
 Object.defineProperty(zkPkiCert.prototype,
@@ -178,6 +202,5 @@ Object.defineProperty(zkPkiCert.prototype,
             }
         }
     });
-
 
 module.exports = zkPkiCert;

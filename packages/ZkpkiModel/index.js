@@ -5,6 +5,15 @@ let ZkPkiModel = function() {
 
     const tenYears = 3652;
 
+    // private functions
+    function getZkPkiCertSerializationData(zkPkiCert) {
+        // only serialize the PEM data
+        return {
+            certificatePemData: zkPkiCert.certificatePemData,
+            privateKeyPemData: zkPkiCert.privateKeyPemData
+        };
+    }
+
     // properties
     this.rootCa = null;
     this.certificates = [];
@@ -16,15 +25,6 @@ let ZkPkiModel = function() {
     this.ELLIPTIC_CURVE_NAMES = certUtil.ELLIPTIC_CURVE_NAMES;
     this.KEY_USAGES = certUtil.KEY_USAGES;
     this.EXTENDED_KEY_USAGES = certUtil.EXTENDED_KEY_USAGES;
-
-    // private functions
-    function getZkPkiCertSerializationData(zkPkiCert) {
-        // only serialize the PEM data
-        return {
-            certificatePemData: zkPkiCert.certificatePemData,
-            privateKeyPemData: zkPkiCert.privateKeyPemData
-        };
-    }
 
     // methods
     this.initialize = async (distinguishedName, algorithm, keySizeOrCurveName) => {
@@ -53,10 +53,21 @@ let ZkPkiModel = function() {
         }
         this.settings = modelObject.settings;
     }
-    this.issueCertificate = async (options) => {
+    this.issueCertificate = async (commonName, algorithm, keySizeOrCurveName, parameters) => {
+        if (this.rootCa.certificate === null) {
+            throw Error("Uninitialized ZkPkiModel does not contain a root CA.");
+        }
+        throw Error("Not implemented");
         // TODO:
+        //const newKeyPair = await rawCert===
+        //let zkPkiCert = await zkPkiCertFactory.createCertificate();
+        //this.certificates.push(zkPkiCert);
+        //return zkPkiCert;
     }
     this.issueCertificateForCsr = async (csr) => {
+        if (this.rootCa.certificate === null) {
+            throw Error("Uninitialized ZkPkiModel does not contain a root CA.");
+        }
         // TODO:
     }
 }
