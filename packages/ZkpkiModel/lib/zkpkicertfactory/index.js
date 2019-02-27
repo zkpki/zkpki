@@ -72,9 +72,11 @@ let ZkPkiCertFactory = function () {
 
         // private key
         if (zkPkiCert.privateKeyPemData === null && zkPkiCert.privateKey !== null) {
-            // TODO:
+            zkPkiCert.privateKeyPemData =
+                certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(zkPkiCert.privateKey));
         } else if (zkPkiCert.privateKeyPemData !== null && zkPkiCert.privateKey === null) {
-            // TODO:
+            const privateKeyData = certUtil.conversions.pemToBer(zkPkiCert.privateKeyPemData);
+            zkPkiCert.privateKey = rawCert.parseRawPrivateKey(privateKeyData);
         }
         return zkPkiCert;
     }
@@ -100,7 +102,7 @@ let ZkPkiCertFactory = function () {
                         certUtil.EXTENDED_KEY_USAGES.TimeStamping
                     ]
                 }),
-            privateKeyPemData: certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(keyPair))
+            privateKeyPemData: certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(keyPair.privateKey))
         });
         return zkPkiCert;
     }
@@ -111,7 +113,7 @@ let ZkPkiCertFactory = function () {
         const keyPair = await generateKeyPair(algorithm, keySizeOrCurveName);
         const zkPkiCert = this.loadCertificate({
             certificate: await rawCert.createRawCertificate(issuerKeyPair, keyPair.publicKey, parameters),
-            privateKeyPemData: certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(keyPair))
+            privateKeyPemData: certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(keyPair.privateKey))
         });
         return zkPkiCert;
     }

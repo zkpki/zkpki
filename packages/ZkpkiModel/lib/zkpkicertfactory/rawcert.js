@@ -127,8 +127,8 @@ exports.generateEcdsaKeyPair = async (curveName) => {
     return await pkijs.getCrypto().generateKey(algorithm.algorithm, true, algorithm.usages);
 }
 
-exports.exportPrivateKey = async (keyPair) => {
-    return await pkijs.getCrypto().exportKey("pkcs8", keyPair.privateKey);
+exports.exportPrivateKey = async (privateKey) => {
+    return await pkijs.getCrypto().exportKey("pkcs8", privateKey);
 }
 
 exports.importRsaPrivateKey = async (pkcs8Buffer, algorithmName) => {

@@ -38,7 +38,7 @@ describe("Raw Certificate Functions",
         it("Export/Import Private Key",
             async function () {
                 const rsaPss2048 = await rawCert.generateRsaKeyPair(certUtil.ALGORITHMS.RsaPss, 2048);
-                let pkcs8 = await rawCert.exportPrivateKey(rsaPss2048);
+                let pkcs8 = await rawCert.exportPrivateKey(rsaPss2048.privateKey);
                 let imported = await rawCert.importRsaPrivateKey(pkcs8, certUtil.ALGORITHMS.RsaPss);
                 assert.deepEqual(rsaPss2048.privateKey.algorithm.name, imported.algorithm.name);
                 assert.deepEqual(rsaPss2048.privateKey.algorithm.modulusLength, imported.algorithm.modulusLength);
@@ -46,7 +46,7 @@ describe("Raw Certificate Functions",
                 assert.ok(imported.extractable);
 
                 const rsaSsa4096 = await rawCert.generateRsaKeyPair(certUtil.ALGORITHMS.RsaSsaPkcs1V1_5, 4096);
-                pkcs8 = await rawCert.exportPrivateKey(rsaSsa4096);
+                pkcs8 = await rawCert.exportPrivateKey(rsaSsa4096.privateKey);
                 imported = await rawCert.importRsaPrivateKey(pkcs8, certUtil.ALGORITHMS.RsaSsaPkcs1V1_5);
                 assert.deepEqual(rsaSsa4096.privateKey.algorithm.name, imported.algorithm.name);
                 assert.deepEqual(rsaSsa4096.privateKey.algorithm.modulusLength, imported.algorithm.modulusLength);
@@ -54,7 +54,7 @@ describe("Raw Certificate Functions",
                 assert.ok(imported.extractable);
 
                 const ecdsaP521 = await rawCert.generateEcdsaKeyPair(certUtil.ELLIPTIC_CURVE_NAMES.NistP521);
-                pkcs8 = await rawCert.exportPrivateKey(ecdsaP521);
+                pkcs8 = await rawCert.exportPrivateKey(ecdsaP521.privateKey);
                 imported = await rawCert.importEcdsaPrivateKey(pkcs8, certUtil.ELLIPTIC_CURVE_NAMES.NistP521);
                 assert.deepEqual(ecdsaP521.privateKey.algorithm.name, imported.algorithm.name);
                 assert.deepEqual(ecdsaP521.privateKey.algorithm.namedCurve, imported.algorithm.namedCurve);
