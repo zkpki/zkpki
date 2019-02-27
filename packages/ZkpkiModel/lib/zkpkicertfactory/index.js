@@ -99,10 +99,9 @@ let ZkPkiCertFactory = function () {
                         certUtil.EXTENDED_KEY_USAGES.OcspSigning,
                         certUtil.EXTENDED_KEY_USAGES.TimeStamping
                     ]
-                })
+                }),
+            privateKeyPemData: certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(keyPair))
         });
-        zkPkiCert.privateKeyPemData =
-            certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(keyPair));
         return zkPkiCert;
     }
 
@@ -111,10 +110,9 @@ let ZkPkiCertFactory = function () {
         validateCertificateParameters(parameters);
         const keyPair = await generateKeyPair(algorithm, keySizeOrCurveName);
         const zkPkiCert = this.loadCertificate({
-            certificate: await rawCert.createRawCertificate(issuerKeyPair, keyPair.publicKey, parameters)
+            certificate: await rawCert.createRawCertificate(issuerKeyPair, keyPair.publicKey, parameters),
+            privateKeyPemData: certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(keyPair))
         });
-        zkPkiCert.privateKeyPemData =
-            certUtil.conversions.berToPem("PRIVATE KEY", await rawCert.exportPrivateKey(keyPair));
         return zkPkiCert;
     }
 

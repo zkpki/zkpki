@@ -125,7 +125,9 @@ pPb5vOaOmWSqcTdsUEUVCDP8sTqu5yUXLODxbn4jfJs=
                 expire.setDate(expire.getDate() + (365 * 10));
                 assert.ok(zkPkiCert.expirationDate.getTime() === expire.getTime(), "Expires in 5 years");
                 assert.ok(zkPkiCert.certificatePemData, "Certificate PEM is not empty");
-                assert.ok(zkPkiCert.privateKeyPemData === null, "Private key PEM is empty");
+                assert.ok(zkPkiCert.privateKeyPemData, "Private key PEM is not empty");
+                assert.ok(zkPkiCert.certificate, "Raw certificate is not empty");
+                // TODO: assert.ok(zkPkiCert.privateKey, "Raw private key is not empty");
                 // TODO: parse certificate and check values directly
                 // TODO: check that authority key identifier matches subject key identifier
             });
