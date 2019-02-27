@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ZkpkiStorage", "../ZkpkiStorage\ZkpkiStorage.njsproj", "{1A2A2F0D-0B46-4EB2-A027-ECB43EC59916}"
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ZkpkiStorage", "..\packages\ZkpkiStorage\ZkpkiStorage.njsproj", "{1A2A2F0D-0B46-4EB2-A027-ECB43EC59916}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

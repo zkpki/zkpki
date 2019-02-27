@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28306.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ZkpkiModel", "../ZkpkiModel/ZkpkiModel.njsproj", "{35ADA39E-BDF2-4499-9193-CBD7E612A7CB}"
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ZkpkiModel", "../packages/ZkpkiModel/ZkpkiModel.njsproj", "{35ADA39E-BDF2-4499-9193-CBD7E612A7CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
